@@ -1,0 +1,38 @@
+services:
+  backend:
+    container_name: NFT_MP_Backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    ports:
+      - 4000:4000
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@pgdb:5432/postgres?schema=public
+    develop:
+      watch:
+        - path: ./backend/package.json
+          action: rebuild
+        - path: ./backend/package-lock.json
+          action: rebuild
+        - path: ./backend
+          target: /app
+          action: sync
+  pgdb:
+    container_name: NFT_MP_Pgdb
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - nftsdata:/var/lib/postgresql/data
+      # - nft-marketplace_pgdata:/var/lib/postgresql/data 
+
+volumes:
+  nftsdata: {}
+  # nft-marketplace_pgdata:
+  #   external: true
