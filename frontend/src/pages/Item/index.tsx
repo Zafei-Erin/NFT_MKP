@@ -43,6 +43,8 @@ export const Item = () => {
       signer
     );
 
+    const tx = await NFTContract.setApprovalForAll(marketplaceContract, true);
+
     const marketTxn = await marketContract.createMarketSale(
       nftaddress,
       item.tokenId,
@@ -52,7 +54,7 @@ export const Item = () => {
     );
     await marketTxn.wait();
   };
-  console.log(item.imageUrl);
+
   const params = {
     ownerAddr: accountAddr,
     date: Date.now(),
@@ -89,7 +91,7 @@ export const Item = () => {
                 </p>
               </div>
               {/* upload img input */}
-              <div className="w-full flex items-center justify-center relative aspect-squareç">
+              <div className="w-full flex items-center justify-center relative aspect-square">
                 <label className="w-full h-full">
                   {
                     <img

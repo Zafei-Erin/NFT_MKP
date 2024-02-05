@@ -1,21 +1,16 @@
-describe("NFTMarketplace", function () {
+describe("NFTMarket", function () {
   it("Should create and execute market sales", async function () {
     const Market = await ethers.getContractFactory("NFTMarketPlace");
     const market = await Market.deploy();
     await market.deployed();
     const marketAddress = market.address;
 
-    const NFT = await ethers.getContractFactory("NFT");
-    const nft = await NFT.deploy(marketAddress);
-    await nft.deployed();
-    const nftContractAddress = nft.address;
-
     let listingPrice = await market.getListingPrice();
     let auctionPrice = ethers.utils.parseUnits("1", "ether");
 
     // create nft token
-    let tx1 = await nft.createToken("https://www.mytokenlocation.com");
-    let tx2 = await nft.createToken("https://www.mytokenlocation2.com");
+    let tx1 = await market.createToken("https://www.mytokenlocation.com");
+    let tx2 = await market.createToken("https://www.mytokenlocation2.com");
 
     // get tx1's tokenId
     tx1 = await tx1.wait();
@@ -29,49 +24,35 @@ describe("NFTMarketplace", function () {
     const value2 = event2.args[2];
     const tokenId2 = value2.toNumber();
 
-    // create 2 nfts in market
-    await market.createMarketItem(nftContractAddress, tokenId1);
-    await market.createMarketItem(nftContractAddress, tokenId2);
-
     // list 2 nfts in market
     await market.createMarketListing(
-      nftContractAddress,
       tokenId1,
       auctionPrice,
-      {
-        value: listingPrice,
-      }
     );
     await market.createMarketListing(
-      nftContractAddress,
       tokenId2,
       auctionPrice,
-      {
-        value: listingPrice,
-      }
     );
 
     // update price
     auctionPrice = ethers.utils.parseUnits("1.12", "ether");
-    await market.changePrice(tokenId1, auctionPrice, {
-      value: listingPrice,
-    });
+    await market.changePrice(tokenId1, auctionPrice);
+
+    // cancel listing
+    await market.cancelListing(tokenId2); 
 
     // create a sale
     const [_, buyerAddress] = await ethers.getSigners();
     await market
       .connect(buyerAddress)
-      .createMarketSale(nftContractAddress, tokenId1, { value: auctionPrice });
+      .createMarketSale(tokenId1, { value: auctionPrice });
 
-    // cancel listing
-    await market.cancelListing(tokenId2); 
 
     let items = await market.fetchMarketItems();
     items = await Promise.all(
       items.map(async (i) => {
-        const tokenUri = await nft.tokenURI(i.tokenId);
+        const tokenUri = await market.tokenURI(i.tokenId);
         let item = {
-          itemId: i.itemId,
           tokenId: i.tokenId.toString(),
           creator: i.creator,
           owner: i.owner,
