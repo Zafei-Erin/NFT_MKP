@@ -141,12 +141,21 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
           </label>
         </div>
         <DialogFooter className="w-full grid grid-cols-2 mt-6">
-          <Button onClick={cancelListing} variant={"destructive"}>
+          <Button
+            onClick={cancelListing}
+            variant={"destructive"}
+            disabled={staus === "Canceling"}
+            className="disabled:cursor-not-allowed"
+          >
             {staus === "Canceling" && <Spinner className="w-6 h-6 mr-1" />}
             Cancel listing
           </Button>
 
-          <Button onClick={changePrice}>
+          <Button
+            onClick={changePrice}
+            disabled={staus === "Changing"}
+            className="disabled:cursor-not-allowed"
+          >
             {staus === "Changing" && <Spinner className="w-6 h-6 mr-1" />}
             Continue
           </Button>

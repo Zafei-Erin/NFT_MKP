@@ -4,18 +4,28 @@
 
 // to deploy on test net:
 // run "npx hardhat run scripts/deploy.ts --network mumbai"
-const hre = require('hardhat');
+const hre = require("hardhat");
 
 async function main() {
-  const NFTMarket = await hre.ethers.getContractFactory('NFTMarketPlace');
+  let txHash, txReceipt;
+  const NFTMarket = await hre.ethers.getContractFactory("NFTMarketPlace");
   const nftMarket = await NFTMarket.deploy();
   await nftMarket.deployed();
-  console.log('nftMarket deployed to:', nftMarket.address);
 
-  const NFT = await hre.ethers.getContractFactory('NFT');
+  txHash = nftMarket.deployTransaction.hash;
+  txReceipt = await hre.ethers.provider.waitForTransaction(txHash);
+  const nftMarketAddress = txReceipt.contractAddress;
+
+  console.log("nftMarket deployed to:", nftMarketAddress);
+
+  const NFT = await hre.ethers.getContractFactory("NFT");
   const nft = await NFT.deploy(nftMarket.address);
   await nft.deployed();
-  console.log('nft deployed to:', nft.address);
+
+  txHash = nft.deployTransaction.hash;
+  txReceipt = await hre.ethers.provider.waitForTransaction(txHash);
+  const nftAddress = txReceipt.contractAddress
+  console.log("nft deployed to:", nftAddress);
 }
 
 main().catch((error) => {

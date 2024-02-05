@@ -66,6 +66,9 @@ contract NFTMarketPlace is ReentrancyGuard {
             false //not listed by default
         );
 
+        // transfer the nft to market
+        ERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+
         emit MarketItemCreated(
             itemId,
             tokenId,
@@ -101,9 +104,6 @@ contract NFTMarketPlace is ReentrancyGuard {
 
         idToMarketItem[itemId].listed = true;
         idToMarketItem[itemId].price = price;
-
-        // transfer the nft to market
-        ERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
 
         // transfer listing price to market
         payable(owner).transfer(listingPrice);

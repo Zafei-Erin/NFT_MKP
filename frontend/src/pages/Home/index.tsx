@@ -50,7 +50,7 @@ const ImgCarousel: React.FC = () => {
 
   return (
     <div
-      className="absolute top-0 bg-cover bg-center transition-all ease-in-out duration-800"
+      className="absolute w-full top-0 bg-cover bg-center transition-all ease-in-out duration-800"
       style={{ backgroundImage: bgUrl }}
     >
       {!nfts.length ? (
@@ -73,9 +73,9 @@ const ImgCarousel: React.FC = () => {
             onMouseLeave={plugin.current.reset}
             className="w-full p-1 group"
           >
-            <div className="grid grid-flow-col auto-cols-auto space-x-1 items-center justify-between">
-              <CarouselPrevious className="hidden sm:flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
-              <CarouselContent className="flex flex-row gap-2 lg:gap-4 ml-0 snap-x">
+            <div className="grid grid-cols-[minmax(20px,_30px)_1fr_minmax(20px,_30px)] space-x-1 items-center justify-between">
+              <CarouselPrevious className="flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
+              <CarouselContent className="flex justify-center sm:justify-start flex-row gap-2 lg:gap-4 ml-0 snap-x">
                 {nfts.map((nft, i) => (
                   <CarouselItem
                     key={i}
@@ -98,7 +98,7 @@ const ImgCarousel: React.FC = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselNext className="hidden sm:flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
+              <CarouselNext className="flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
             </div>
           </Carousel>
         </div>

@@ -49,12 +49,19 @@ export const Created = () => {
                 </div>
               </div>
             </Link>
-
-            {nft.listed ? (
+            {nft.ownerAddress.toLowerCase() !== accountAddr.toLowerCase() ? (
+              <button
+                disabled
+                className="group-hover:h-[2.8rem] font-semibold transition-all h-0 absolute bottom-0 flex items-center justify-center bg-gray-500 disabled:cursor-not-allowed text-transparent group-hover:text-gray-100 w-full "
+              >
+                Sold
+              </button>
+            ) : nft.listed ? (
               <UpdateListingModal tokenId={nft.tokenId} />
             ) : (
               <ListModal tokenId={nft.tokenId} />
             )}
+            {}
           </div>
         );
       })}

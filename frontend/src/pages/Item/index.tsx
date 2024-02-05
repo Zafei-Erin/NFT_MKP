@@ -30,12 +30,7 @@ export const Item = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const buyItemInMKP = async () => {
-    if (!provider) {
-      console.log("please connect wallet");
-      return;
-    }
-
+  const buyItemInMKP = async (provider: ethers.providers.Web3Provider) => {
     const signer = provider.getSigner();
     const marketContract = new ethers.Contract(
       nftmarketaddress,
@@ -52,23 +47,27 @@ export const Item = () => {
     );
     await marketTxn.wait();
   };
-  console.log(item.imageUrl);
   const params = {
     ownerAddr: accountAddr,
     date: Date.now(),
     price: item ? item.price : 0,
   };
 
-  const updateDB = async () =>
+  const updateDB = async () => {
     fetch(`${apiURL}/nfts/buy/${item.tokenId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
     });
+  };
 
   const buyNFT = () => {
+    if (!provider || !accountAddr) {
+      console.log("please connect wallet");
+      return;
+    }
     setLoading(true);
-    buyItemInMKP();
+    buyItemInMKP(provider);
     updateDB();
     setLoading(false);
   };
@@ -89,15 +88,13 @@ export const Item = () => {
                 </p>
               </div>
               {/* upload img input */}
-              <div className="w-full flex items-center justify-center relative aspect-squareç">
+              <div className="flex items-center justify-center relative aspect-square w-full">
                 <label className="w-full h-full">
-                  {
-                    <img
-                      src={item.imageUrl}
-                      alt="imgPreview"
-                      className="absolute w-full h-full object-cover rounded-xl hover:shadow-2xl transition ease-in-out hover:-translate-y-1 duration-150"
-                    />
-                  }
+                  <img
+                    className="absolute w-full h-full object-cover rounded-xl hover:shadow-2xl transition ease-in-out hover:-translate-y-1 duration-150"
+                    src={item.imageUrl}
+                    alt="imgPreview"
+                  />
                 </label>
               </div>
             </div>

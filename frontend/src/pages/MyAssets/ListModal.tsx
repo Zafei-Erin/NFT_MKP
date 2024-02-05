@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,6 +15,7 @@ import { useState } from "react";
 import useSWR, { Fetcher } from "swr";
 
 import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import { Spinner } from "@/assets";
 
 type ListModalProps = {
   tokenId: number;
@@ -29,6 +29,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId }) => {
   const { accountAddr, provider, connect } = useWallet();
   const [price, setPrice] = useState("");
   const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [listing, setListing] = useState(false);
 
   // list create in market
   const listItem = async () => {
@@ -36,25 +37,30 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId }) => {
       connect();
       return;
     }
-
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      nftmarketaddress,
-      NFTMarketPlace.abi,
-      signer
-    );
-    const listingPrice = await contract.getListingPrice();
-    const priceEth = ethers.utils.parseUnits(price, "ether");
-    const transaction = await contract.createMarketListing(
-      nftaddress,
-      tokenId,
-      priceEth,
-      {
-        value: listingPrice,
-      }
-    );
-    await transaction.wait();
-    setShouldUpdate(true);
+    try {
+      setListing(true);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        nftmarketaddress,
+        NFTMarketPlace.abi,
+        signer
+      );
+      const listingPrice = await contract.getListingPrice();
+      const priceEth = ethers.utils.parseUnits(price, "ether");
+      const transaction = await contract.createMarketListing(
+        nftaddress,
+        tokenId,
+        priceEth,
+        {
+          value: listingPrice,
+        }
+      );
+      await transaction.wait();
+      setShouldUpdate(true);
+      setListing(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // update database
@@ -109,9 +115,17 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId }) => {
           </label>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
+          {listing ? (
+            <Button
+              disabled
+              className="flex items-center justify-center gap-1 disabled:cursor-not-allowed"
+            >
+              <Spinner className="w-4 h-4" />
+              <div>Listing...</div>
+            </Button>
+          ) : (
             <Button onClick={listItem}>Continue</Button>
-          </DialogClose>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

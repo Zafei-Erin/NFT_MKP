@@ -38,11 +38,11 @@ app.get("/nfts", async (req, res, next) => {
 });
 
 // get one nft
-app.get("/nfts/:id", async (req, res, next) => {
+app.get("/nfts/:tokenId", async (req, res, next) => {
   try {
     const nft = await prisma.nft.findUnique({
       where: {
-        id: parseInt(req.params.id),
+        tokenId: parseInt(req.params.tokenId),
       },
       include: {
         offers: {
@@ -201,7 +201,7 @@ app.patch("/nfts/buy/:tokenId", async (req, res, next) => {
       data: {
         price: parseFloat(price),
         date: new Date(date),
-        nftId: tokenId,
+        nftTokenId: tokenId,
       },
     });
 
