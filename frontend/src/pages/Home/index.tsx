@@ -19,7 +19,7 @@ const fetcher: Fetcher<NFT[], string> = (url: string) =>
 
 export const Home = () => {
   return (
-    <div className="h-[calc(100vh-6rem)] flex items-start justify-center">
+    <div className="max-w-screen-[98rem] flex items-start justify-center ">
       <ImgCarousel />
     </div>
   );
@@ -50,18 +50,17 @@ const ImgCarousel: React.FC = () => {
 
   return (
     <div
-      className="absolute w-full top-0 bg-cover bg-center transition-all ease-in-out duration-800"
+      className="duration-800 absolute top-0 w-full bg-cover bg-center transition-all ease-in-out "
       style={{ backgroundImage: bgUrl }}
     >
       {!nfts.length ? (
-        <div className=" h-lvh text-2xl font-bold text-sky-600 flex items-center justify-center">
+        <div className="flex h-lvh items-center justify-center text-2xl font-bold text-sky-600">
           <p>No items in marketplace</p>
         </div>
       ) : (
-        <div className="w-full h-full backdrop-blur-3xl pt-48 flex justify-center 2xl:px-2 items-end overflow-hidden mx-auto max-w-screen-[98rem]">
+        <div className="mx-auto flex h-full w-full items-end justify-center overflow-hidden pt-48 backdrop-blur-3xl 2xl:px-2">
           <Carousel
             opts={{
-              align: "center",
               loop: true,
               breakpoints: {
                 "(min-width: 640px)": { align: "start" },
@@ -71,26 +70,23 @@ const ImgCarousel: React.FC = () => {
             plugins={[plugin.current]}
             onMouseEnter={plugin.current.stop}
             onMouseLeave={plugin.current.reset}
-            className="w-full p-1 group"
+            className="group flex h-full w-full items-center p-1"
           >
-            <div className="grid grid-cols-[minmax(20px,_30px)_1fr_minmax(20px,_30px)] space-x-1 items-center justify-between">
-              <CarouselPrevious className="flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
-              <CarouselContent className="flex justify-center sm:justify-start flex-row gap-2 lg:gap-4 ml-0 snap-x">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center justify-between space-x-1">
+              <CarouselPrevious className="flex h-full w-5 items-center justify-self-center rounded-md border-0 bg-transparent text-transparent transition-all duration-300 ease-out group-hover:bg-gray-500/60 group-hover:text-gray-100 lg:w-8" />
+              <CarouselContent className="items-centerlg:-ml-4 -ml-2 flex">
                 {nfts.map((nft, i) => (
                   <CarouselItem
                     key={i}
-                    className={cn(
-                      "relative basis-[90%] w-full p-0 sm:basis-[49%] md:basis-[32.5%] lg:basis-[24%]",
-                      i == nfts.length - 1 && "mr-2 lg:mr-4"
-                    )}
+                    className="w-full basis-full pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 lg:pl-4"
                   >
-                    <Link to={`/item/${nft.tokenId}`} className="">
+                    <Link to={`/item/${nft.tokenId}`} className="relative">
                       <img
                         src={nft.imageUrl}
                         alt={nft.name}
-                        className="object-cover aspect-square w-full rounded-lg"
+                        className="aspect-square w-full overflow-hidden rounded-xl object-cover"
                       />
-                      <div className="absolute bottom-0 flex h-[40%] w-full flex-col justify-end space-y-1 rounded-b-lg bg-gradient-to-b from-transparent to-gray-900/30 px-4 pb-4 text-gray-200">
+                      <div className="absolute bottom-0 flex h-[40%] w-full flex-col justify-end space-y-1 rounded-b-xl bg-gradient-to-b from-transparent to-gray-900/30 px-4 pb-4 text-gray-200">
                         <div className="truncate font-semibold">{nft.name}</div>
                         <div className="text-sm">Price: {nft.price} ETH</div>
                       </div>
@@ -98,7 +94,7 @@ const ImgCarousel: React.FC = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselNext className="flex flex-col h-full w-5 2xl:w-9 group-hover:bg-gray-500/60 rounded-md bg-transparent text-transparent border-0 group-hover:text-gray-100 transition duration-300 ease-out" />
+              <CarouselNext className="flex h-full w-5 items-center justify-self-center rounded-md border-0 bg-transparent text-transparent transition-all duration-300 ease-out group-hover:bg-gray-500/60 group-hover:text-gray-100 lg:w-8" />
             </div>
           </Carousel>
         </div>
