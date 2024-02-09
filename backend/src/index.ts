@@ -1,7 +1,7 @@
-import express from "express";
 import { PrismaClient } from "@prisma/client";
+import express from "express";
 import { errorHandler } from "./middlewares/errorHandler";
-import cors from "cors";
+import { z } from "zod";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -27,10 +27,38 @@ app.get("/test", (req, res) => {
   res.status(200).json({ message: "API is working 11" });
 });
 
+const GetNFTRequest = z.object({
+  offset: z.coerce.number().optional().default(10),
+  skip: z.coerce.number().optional().default(0),
+  orderBy: z.coerce.string().optional().default("tokenId"),
+  order: z.coerce.string().optional().default("desc"),
+  filterBy: z.coerce.string().optional(),
+  filterBool: z.coerce.boolean().optional().default(false),
+});
+
+type GetNFTRequest = z.infer<typeof GetNFTRequest>;
+
 // get all nfts, to display on home page
 app.get("/nfts", async (req, res, next) => {
+  const queryWithDefault = GetNFTRequest.parse(req.query);
+
+  const orderBy = queryWithDefault.orderBy;
+  const filterBy = queryWithDefault.filterBy;
   try {
-    const nfts = await prisma.nft.findMany();
+    const nfts = await prisma.nft.findMany({
+      take: queryWithDefault.offset,
+      skip: queryWithDefault.skip,
+      orderBy: {
+        [orderBy]: queryWithDefault.order,
+      },
+      where: {
+        ...(filterBy
+          ? {
+              [filterBy]: queryWithDefault.filterBool,
+            }
+          : {}),
+      },
+    });
     res.status(200).json(nfts);
   } catch (error) {
     next(error);

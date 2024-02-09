@@ -1,5 +1,5 @@
 import { ErrorBoundary } from "react-error-boundary";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import { ErrorPage } from "@/components/ErrorPage";
 import { Suspense } from "react";
@@ -14,10 +14,13 @@ import { Toaster } from "./components/ui/toaster";
 import { TestButton } from "./pages/test";
 
 function App() {
+  const RRLocation = useLocation();
+  const { pathname } = RRLocation;
   return (
     <div className="">
       <WalletProvider>
-        <Header />
+        {pathname !== "/" && <Header />}
+
         <ErrorBoundary fallback={<ErrorPage />} onReset={location.reload}>
           <Suspense fallback={<LoadingPage />}>
             <Routes>
