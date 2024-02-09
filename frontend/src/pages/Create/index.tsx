@@ -3,6 +3,7 @@ import { useState } from "react";
 import { UploadIcon } from "@/assets";
 import { Label } from "@radix-ui/react-label";
 import { ProgressModal } from "./ProgressModal";
+import { Trash2 } from "lucide-react";
 
 export type formInputType = {
   img: File | null;
@@ -20,9 +21,9 @@ export const Create = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-center p-8 max-w-screen-xl ">
+      <div className="grid w-full max-w-screen-xl grid-cols-1 justify-items-center gap-10 p-8 md:grid-cols-2 ">
         {/* first part */}
-        <div className="space-y-10 flex flex-col items-start justify-start w-full">
+        <div className="flex w-full flex-col items-start justify-start space-y-10">
           {/* header */}
           <div className="space-y-2">
             <h3 className="text-2xl font-semibold">Create an NFT</h3>
@@ -32,17 +33,17 @@ export const Create = () => {
             </p>
           </div>
           {/* upload img input */}
-          <div className="w-full flex items-center justify-center">
-            <div className="w-80 md:w-full relative aspect-square">
-              <label className="w-full h-full">
+          <div className="flex w-full items-center justify-center">
+            <div className="relative aspect-square w-80 md:w-full">
+              <label className="h-full w-full">
                 {imgPreviewUrl === "" ? (
-                  <div className="flex justify-center w-full h-full px-14 transition bg-white border border-gray-400 border-dashed rounded-xl appearance-none cursor-pointer hover:border-gray-400 hover:border-solid hover:bg-gray-200/30 focus:outline-none">
+                  <div className="flex h-full w-full cursor-pointer appearance-none justify-center rounded-xl border border-dashed border-gray-400 bg-white px-14 transition hover:border-solid hover:border-gray-400 hover:bg-gray-200/30 focus:outline-none">
                     <span className="flex flex-col items-center justify-center space-x-2 text-sm">
-                      <UploadIcon className="w-6 h-6 mb-6 text-gray-900" />
+                      <UploadIcon className="mb-6 h-6 w-6 text-gray-900" />
                       <span className="font-semibold text-gray-600">
                         Drag and drop media
                       </span>
-                      <span className="text-sky-600 font-semibold">
+                      <span className="font-semibold text-sky-600">
                         Browse files
                       </span>
                       <span className="text-gray-700">Max size: 50MB</span>
@@ -52,11 +53,27 @@ export const Create = () => {
                     </span>
                   </div>
                 ) : (
-                  <img
-                    src={imgPreviewUrl}
-                    alt="imgPreview"
-                    className="absolute w-full h-full object-cover rounded-xl hover:shadow-2xl transition ease-in-out hover:-translate-y-1 duration-150"
-                  />
+                  <div
+                    className="group flex"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <img
+                      src={imgPreviewUrl}
+                      alt="imgPreview"
+                      className="gropu-hover:shadow-2xl absolute h-full w-full rounded-xl object-cover transition duration-150 ease-in-out group-hover:-translate-y-1"
+                    />
+                    <div className="absolute z-50 h-full w-full rounded-xl transition duration-150 ease-in-out group-hover:-translate-y-1 group-hover:bg-gray-900/60" />
+                    <button
+                      className="hover:cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setImgPreviewUrl("");
+                        updateFormInput({ ...formInput, img: null });
+                      }}
+                    >
+                      <Trash2 className="absolute right-6 top-6 z-50 hidden h-6 w-6 stroke-white hover:stroke-red-600 group-hover:block" />
+                    </button>
+                  </div>
                 )}
                 <input
                   type="file"
@@ -74,8 +91,8 @@ export const Create = () => {
         </div>
 
         {/* second part */}
-        <div className="flex flex-col justify-center w-full gap-8">
-          <div className="flex flex-col items-start justify-start gap-3 w-full">
+        <div className="flex w-full flex-col justify-center gap-8">
+          <div className="flex w-full flex-col items-start justify-start gap-3">
             <Label htmlFor="itemName" className="text-md font-semibold">
               Name *
             </Label>
@@ -83,31 +100,25 @@ export const Create = () => {
               id="itemName"
               required
               placeholder="Name your NFT"
-              className="rounded-lg border p-3 w-full text-md text-zinc-500 placeholder:text-zinc-500 h-fit appearance-none focus:outline-none "
+              className="text-md h-fit w-full appearance-none rounded-lg border p-3 text-zinc-500 placeholder:text-zinc-500 focus:outline-none "
               onChange={(e) =>
                 updateFormInput({ ...formInput, name: e.target.value })
               }
             />
           </div>
-          <div className="flex flex-col items-start justify-center gap-3 w-full">
+          <div className="flex w-full flex-col items-start justify-center gap-3">
             <Label htmlFor="description" className="text-md font-semibold">
               Description
             </Label>
             <textarea
               id="description"
               placeholder="Enter a description"
-              className="rounded-lg border p-3 w-full min-h-32 text-md text-zinc-500 placeholder:text-zinc-500 h-fit appearance-none focus:outline-none "
+              className="text-md h-fit min-h-32 w-full appearance-none rounded-lg border p-3 text-zinc-500 placeholder:text-zinc-500 focus:outline-none "
               onChange={(e) =>
                 updateFormInput({ ...formInput, description: e.target.value })
               }
             />
           </div>
-          {/* <button
-            onClick={mintNFT}
-            className="mt-4 rounded-lg bg-sky-500 p-4 font-bold text-white shadow-lg"
-          >
-            Create Digital Asset
-          </button> */}
           <ProgressModal formInput={formInput} />
         </div>
       </div>

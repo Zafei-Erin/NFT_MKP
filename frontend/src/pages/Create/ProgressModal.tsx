@@ -33,14 +33,15 @@ type ProgressModalProps = {
 type ProgressStatus =
   | "init"
   | "uploadingImg"
-  | "creatingURI"
   | "creatingItem"
+  | "deployingItem"
   | "error";
 
 const ErrorMessageMapping = {
-  missingData: "please check upload data",
-  notConnected: "please connect wallet",
-  failed: "something went wrong",
+  missingData:
+    "Some data are missing. Please provide image and name for your NFT.",
+  notConnected: "Please connect wallet and try again.",
+  failed: "Something went wrong.",
 };
 
 export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
@@ -65,7 +66,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
           "Content-Type": `multipart/form-data`,
           Authorization: `Bearer ${JWT}`,
         },
-      }
+      },
     );
     const url = `https://peach-top-whippet-722.mypinata.cloud/ipfs/${res.data.IpfsHash}`;
     return url;
@@ -73,7 +74,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
 
   // upload nft to ipfs
   async function createURI(fileUrl: string) {
-    setStatus("creatingURI");
     const { name, description } = formInput;
     const file = JSON.stringify({
       name,
@@ -96,7 +96,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
           "Content-Type": `multipart/form-data`,
           Authorization: `Bearer ${JWT}`,
         },
-      }
+      },
     );
     const url = `https://peach-top-whippet-722.mypinata.cloud/ipfs/${res.data.IpfsHash}`;
     return url;
@@ -105,7 +105,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
   // create nft and store to market place
   async function createItem(
     uri: string,
-    provider: ethers.providers.Web3Provider
+    provider: ethers.providers.Web3Provider,
   ) {
     setStatus("creatingItem");
     const signer = provider.getSigner();
@@ -117,14 +117,15 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
     const value = event.args[2];
     const tokenId = value.toNumber();
 
+    setStatus("deployingItem");
     const marketContract = new ethers.Contract(
       nftmarketaddress,
       NFTMarketPlace.abi,
-      signer
+      signer,
     );
     const marketTxn = await marketContract.createMarketItem(
       nftaddress,
-      tokenId
+      tokenId,
     );
     await marketTxn.wait();
 
@@ -136,7 +137,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
     uri: string,
     fileUrl: string,
     tokenId: string,
-    creatorAddress: string
+    creatorAddress: string,
   ) => {
     const newNft = {
       tokenId: tokenId,
@@ -182,7 +183,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
       toast({
         title: (
           <div className="flex items-center justify-start gap-1">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
             Success
           </div>
         ),
@@ -217,37 +218,38 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
             {staus === "error" ? "Oops" : "Creating NFT"}
           </AlertDialogTitle>
           <AlertDialogDescription>
+            <p>This process could take a while...</p>
             {staus === "error" ? (
               error
             ) : (
-              <div className=" space-y-4 text-base mt-3">
+              <div className=" mt-3 space-y-4 text-base">
                 <div className="flex items-center justify-start gap-2">
                   {staus === "uploadingImg" ? (
-                    <Spinner className="w-6 h-6" />
+                    <Spinner className="h-6 w-6" />
                   ) : (
-                    <CheckCircle2 className="w-5 h-5 ml-0.5 text-sky-600" />
+                    <CheckCircle2 className="ml-0.5 h-5 w-5 text-sky-600" />
                   )}
-                  <p>Uploading to ipfs</p>
+                  <p>Uploading image</p>
                 </div>
                 <div className="flex items-center justify-start gap-2">
                   {staus === "uploadingImg" ? (
-                    <CircleDotDashed className="w-5 h-5 ml-0.5 text-sky-600" />
-                  ) : staus === "creatingURI" ? (
-                    <Spinner className="w-6 h-6" />
-                  ) : (
-                    <CheckCircle2 className="w-5 h-5 ml-0.5 text-sky-600" />
-                  )}
-                  <p>Creating uri</p>
-                </div>
-                <div className="flex items-center justify-start gap-2">
-                  {["uploadingImg", "creatingURI"].includes(staus) ? (
-                    <CircleDotDashed className="w-5 h-5 ml-0.5 text-sky-600" />
+                    <CircleDotDashed className="ml-0.5 h-5 w-5 text-sky-600" />
                   ) : staus === "creatingItem" ? (
-                    <Spinner className="w-6 h-6" />
+                    <Spinner className="h-6 w-6" />
                   ) : (
-                    <CheckCircle2 className="w-5 h-5 ml-0.5 text-sky-600" />
+                    <CheckCircle2 className="ml-0.5 h-5 w-5 text-sky-600" />
                   )}
-                  <p>Creating token</p>
+                  <p>Creating NFT</p>
+                </div>
+                <div className="flex items-center justify-start gap-2">
+                  {["uploadingImg", "creatingItem"].includes(staus) ? (
+                    <CircleDotDashed className="ml-0.5 h-5 w-5 text-sky-600" />
+                  ) : staus === "deployingItem" ? (
+                    <Spinner className="h-6 w-6" />
+                  ) : (
+                    <CheckCircle2 className="ml-0.5 h-5 w-5 text-sky-600" />
+                  )}
+                  <p>Deploying NFT to market place</p>
                 </div>
               </div>
             )}
@@ -260,9 +262,17 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
               <div>Connect Wallet</div>
             </AlertDialogAction>
           </AlertDialogFooter>
+        ) : (staus === "error" && error === ErrorMessageMapping.missingData) ||
+          error === ErrorMessageMapping.failed ? (
+          <AlertDialogFooter>
+            <AlertDialogAction>Continue</AlertDialogAction>
+          </AlertDialogFooter>
         ) : (
           <AlertDialogFooter>
-            <AlertDialogAction>Hide</AlertDialogAction>
+            <AlertDialogAction disabled>
+              <Spinner className="mr-2 h-4 w-4" />
+              Creating
+            </AlertDialogAction>
           </AlertDialogFooter>
         )}
       </AlertDialogContent>
