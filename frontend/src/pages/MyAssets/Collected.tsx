@@ -2,8 +2,8 @@ import { useWallet } from "@/context/walletProvider";
 import { NFT } from "@/types/types";
 import { Link } from "react-router-dom";
 import useSWR, { Fetcher } from "swr";
-import { ListModal } from "./ListModal";
-import { UpdateListingModal } from "./UpdateListingModal";
+import { ListModal } from "../../components/ListModal";
+import { UpdateListingModal } from "../../components/UpdateListingModal";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -18,7 +18,7 @@ export const Collected = () => {
     fetcher,
     {
       suspense: true,
-    }
+    },
   );
 
   if (!nfts || !nfts.length) {
@@ -26,19 +26,19 @@ export const Collected = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 gap-y-4">
+    <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {nfts.map((nft) => {
         return (
           <div
             key={nft.id}
-            className="group relative aspect-[2/3] rounded-lg overflow-hidden shadow-md hover:cursor-pointer"
+            className="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-md hover:cursor-pointer"
           >
             <Link to={`/item/${nft.tokenId}`}>
               <div className="h-full">
-                <img src={nft.imageUrl} className="w-full h-2/3 object-cover" />
-                <div className="px-4 pb-6 pt-4 flex flex-col items-start justify-center">
-                  <div className="font-semibold text-sm mb-3">{nft.name}</div>
-                  <div className="font-semibold text-sm mb-2">
+                <img src={nft.imageUrl} className="h-2/3 w-full object-cover" />
+                <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4">
+                  <div className="mb-3 text-sm font-semibold">{nft.name}</div>
+                  <div className="mb-2 text-sm font-semibold">
                     {nft.listed ? nft.price : "not listed"}
                   </div>
                   <div className="text-xs text-gray-700">
@@ -50,9 +50,17 @@ export const Collected = () => {
               </div>
             </Link>
             {nft.listed ? (
-              <UpdateListingModal tokenId={nft.tokenId} />
+              <UpdateListingModal tokenId={nft.tokenId}>
+                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all group-hover:h-[2.8rem] group-hover:text-gray-100 ">
+                  Edit Lising
+                </button>
+              </UpdateListingModal>
             ) : (
-              <ListModal tokenId={nft.tokenId} />
+              <ListModal tokenId={nft.tokenId}>
+                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all disabled:cursor-not-allowed disabled:bg-gray-600 group-hover:h-[2.8rem] group-hover:text-gray-100">
+                  List now
+                </button>
+              </ListModal>
             )}
           </div>
         );

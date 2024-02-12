@@ -130,7 +130,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ offers }) => {
   const { data: ethPrice } = useSWR(
     `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${ES_API_KEY}`,
     fetcher,
-    { suspense: true }
+    { suspense: true },
   );
   const OfferWithUSD: OfferWithUSD[] = offers.map((origin) => {
     return { ...origin, priceUSD: origin.price * parseFloat(ethPrice.ethusd) };
@@ -165,7 +165,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ offers }) => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -181,7 +181,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ offers }) => {
                     <TableCell key={cell.id} className="px-6">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -208,6 +208,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ offers }) => {
             setPageIndex((prev) => prev - 1);
           }}
           disabled={!table.getCanPreviousPage()}
+          className=" disabled:hidden"
         >
           Previous
         </Button>
@@ -218,6 +219,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ offers }) => {
             setPageIndex((prev) => prev + 1);
           }}
           disabled={!table.getCanNextPage()}
+          className=" disabled:hidden"
         >
           Next
         </Button>

@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { NotConnectedPage } from "@/components/NotConnectedPage";
 import { Collected } from "./Collected";
 import { useSearchParams } from "react-router-dom";
+import { Offered } from "./Offered";
+import { TTable } from "./TTable";
 
 const DEFAULT_TAB = "collected";
 
@@ -14,8 +16,6 @@ export const MyAssets = () => {
   const tab = searchParams.get("tab");
 
   const updateTab = (selectedTab: string) => {
-    console.log(selectedTab);
-
     setSearchParams({ tab: selectedTab });
   };
 
@@ -35,7 +35,7 @@ export const MyAssets = () => {
   return (
     <div className="px-4 pb-6">
       <Tabs defaultValue={tab || DEFAULT_TAB}>
-        <TabsList className="flex gap-3 items-center justify-start md:justify-evenly overflow-x-auto">
+        <TabsList className="flex items-center justify-start gap-3 overflow-x-auto md:justify-evenly">
           {/* 买的: creator 不是自己，owner 是自己 */}
           <TabsTrigger
             value="collected"
@@ -69,7 +69,7 @@ export const MyAssets = () => {
           {accountAddr ? <Created /> : <NotConnectedPage />}
         </TabsContent>
         <TabsContent value="offers-made">
-          Change your password here.
+          {accountAddr ? <TTable /> : <NotConnectedPage />}
         </TabsContent>
       </Tabs>
     </div>

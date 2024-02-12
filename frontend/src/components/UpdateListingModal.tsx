@@ -12,13 +12,14 @@ import {
 import { useWallet } from "@/context/walletProvider";
 import { NFT } from "@/types/types";
 import { ethers } from "ethers";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import useSWR, { Fetcher } from "swr";
 
-import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
 
 type ListModalProps = {
   tokenId: number;
+  children: ReactNode;
 };
 type Params = NFT & { userAddr: string };
 type FetcherWithBody = {
@@ -30,7 +31,10 @@ type status = "Init" | "Canceling" | "Changing" | "Error";
 const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
 const api = import.meta.env.VITE_API_URL;
 
-export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
+export const UpdateListingModal: React.FC<ListModalProps> = ({
+  tokenId,
+  children,
+}) => {
   const { accountAddr, provider, connect } = useWallet();
   const [price, setPrice] = useState("");
   const [staus, setStatus] = useState<status>("Init");
@@ -50,7 +54,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
       const contract = new ethers.Contract(
         nftmarketaddress,
         NFTMarketPlace.abi,
-        signer
+        signer,
       );
 
       const transaction = await contract.cancelListing(tokenId);
@@ -76,7 +80,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
       const contract = new ethers.Contract(
         nftmarketaddress,
         NFTMarketPlace.abi,
-        signer
+        signer,
       );
 
       const priceEth = ethers.utils.parseUnits(price, "ether");
@@ -99,21 +103,16 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
   const { data: nft, isLoading } = useSWR(
     shouldUpdate ? { url: `${api}/nfts/${tokenId}`, body: params } : null,
     fetcher,
-    { suspense: true }
+    { suspense: true },
   );
 
   if (nft && !isLoading) {
-    console.log(window.location);
     window.location.reload();
   }
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <button className="group-hover:h-[2.8rem] font-semibold transition-all h-0 absolute bottom-0 flex items-center justify-center bg-blue-500 text-transparent group-hover:text-gray-100 w-full ">
-          Edit Lising
-        </button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit listing</DialogTitle>
@@ -124,30 +123,30 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
         <div>
           <label
             htmlFor="price"
-            className="text-center flex flex-col items-start justify-center gap-4"
+            className="flex flex-col items-start justify-center gap-4 text-center"
           >
             <div className="font-semibold">Set new price</div>
-            <div className="col-span-3 rounded-lg border p-3 w-full flex items-center justify-between">
+            <div className="col-span-3 flex w-full items-center justify-between rounded-lg border p-3">
               <input
                 id="price"
                 required
                 type="number"
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00 "
-                className="text-md text-zinc-500 placeholder:text-zinc-500 h-fit appearance-none focus:outline-none"
+                className="text-md h-fit appearance-none text-zinc-500 placeholder:text-zinc-500 focus:outline-none"
               />
               <p>ETH</p>
             </div>
           </label>
         </div>
-        <DialogFooter className="w-full grid grid-cols-2 mt-6">
+        <DialogFooter className="mt-6 grid w-full grid-cols-2">
           <Button
             onClick={cancelListing}
             variant={"destructive"}
             disabled={staus === "Canceling"}
             className="disabled:cursor-not-allowed"
           >
-            {staus === "Canceling" && <Spinner className="w-6 h-6 mr-1" />}
+            {staus === "Canceling" && <Spinner className="mr-1 h-6 w-6" />}
             Cancel listing
           </Button>
 
@@ -156,7 +155,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({ tokenId }) => {
             disabled={staus === "Changing"}
             className="disabled:cursor-not-allowed"
           >
-            {staus === "Changing" && <Spinner className="w-6 h-6 mr-1" />}
+            {staus === "Changing" && <Spinner className="mr-1 h-6 w-6" />}
             Continue
           </Button>
         </DialogFooter>

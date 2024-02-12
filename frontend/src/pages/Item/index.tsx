@@ -1,84 +1,37 @@
-import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
-import { NFT } from "@/types/types";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PriceChart } from "./PriceChart";
-import { OfferTable } from "./OfferTable";
-import useSWR, { Fetcher } from "swr";
-import { useParams } from "react-router-dom";
+import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { useWallet } from "@/context/walletProvider";
-import { ethers } from "ethers";
-import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
-import { useState } from "react";
-import { BuyModal } from "./BuyModal";
+import { NFT } from "@/types/types";
+import { useParams } from "react-router-dom";
+import useSWR, { Fetcher } from "swr";
+import { BuyerSection } from "./BuyerSection";
+import { OwnerSection } from "./OwnerSection";
+import { PriceChart } from "./PriceChart";
 
 const apiURL = import.meta.env.VITE_API_URL;
-const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
 const nftaddress = import.meta.env.VITE_NFT_ADDRESS;
 const dataFetcher: Fetcher<NFT, string> = (url: string) =>
   fetch(url).then((data) => data.json());
 
 export const Item = () => {
-  const { provider, accountAddr } = useWallet();
+  const { accountAddr } = useWallet();
   const { tokenId } = useParams();
   const { data: item } = useSWR(`${apiURL}/nfts/${tokenId}`, dataFetcher, {
     suspense: true,
   });
-  const [loading, setLoading] = useState(false);
-
-  const buyItemInMKP = async (provider: ethers.providers.Web3Provider) => {
-    const signer = provider.getSigner();
-    const marketContract = new ethers.Contract(
-      nftmarketaddress,
-      NFTMarketPlace.abi,
-      signer
-    );
-
-    const marketTxn = await marketContract.createMarketSale(
-      nftaddress,
-      item.tokenId,
-      {
-        value: ethers.utils.parseUnits(item.price.toString(), "ether"),
-      }
-    );
-    await marketTxn.wait();
-  };
-  const params = {
-    ownerAddr: accountAddr,
-    date: Date.now(),
-    price: item ? item.price : 0,
-  };
-
-  const updateDB = async () => {
-    fetch(`${apiURL}/nfts/buy/${item.tokenId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params),
-    });
-  };
-
-  const buyNFT = () => {
-    if (!provider || !accountAddr) {
-      console.log("please connect wallet");
-      return;
-    }
-    setLoading(true);
-    buyItemInMKP(provider);
-    updateDB();
-    setLoading(false);
-  };
 
   return (
     <div>
       {item && (
         <div className="flex items-center justify-center">
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-start p-8 max-w-screen-xl ">
+          <div className="grid w-full max-w-screen-xl grid-cols-1 justify-items-start gap-10 p-8 md:grid-cols-2 ">
             {/* first part */}
-            <div className="space-y-10 flex flex-col items-start justify-start w-full">
+            <div className="flex w-full flex-col items-start justify-start space-y-10">
               {/* header */}
               <div className="space-y-2">
                 <h3 className="text-4xl font-semibold">{item.name}</h3>
@@ -88,10 +41,10 @@ export const Item = () => {
                 </p>
               </div>
               {/* upload img input */}
-              <div className="flex items-center justify-center relative aspect-square w-full">
-                <label className="w-full h-full">
+              <div className="relative flex aspect-square w-full items-center justify-center">
+                <label className="h-full w-full">
                   <img
-                    className="absolute w-full h-full object-cover rounded-xl hover:shadow-2xl transition ease-in-out hover:-translate-y-1 duration-150"
+                    className="absolute h-full w-full rounded-xl object-cover transition duration-150 ease-in-out hover:-translate-y-1 hover:shadow-2xl"
                     src={item.imageUrl}
                     alt="imgPreview"
                   />
@@ -100,40 +53,25 @@ export const Item = () => {
             </div>
 
             {/* second part */}
-            <div className="flex flex-col justify-start w-full gap-8">
+            <div className="flex w-full flex-col justify-start gap-8">
               <div>
-                {item.listed ? (
-                  <div className="flex flex-col items-start justify-start gap-3 w-full rounded-lg border p-6">
-                    <div className="text-sm text-gray-600">Price</div>
-                    <div className="text-xl sm:text-3xl font-semibold">
-                      {item.price} ETH
-                    </div>
-                    <BuyModal item={item} action={buyNFT}>
-                      <button className="rounded-lg bg-sky-600 text-gray-100 font-semibold text-lg w-full py-2">
-                        Buy
-                      </button>
-                    </BuyModal>
-                  </div>
+                {item.ownerAddress.toLowerCase() ===
+                accountAddr.toLowerCase() ? (
+                  <OwnerSection item={item} />
                 ) : (
-                  <div>
-                    <div className="font-semibold text-lg pb-3">Offers</div>
-                    <OfferTable offers={item.offers} />
-                    <button className="rounded-lg bg-sky-600 text-gray-100 font-semibold text-lg w-full py-2">
-                      Place Offer
-                    </button>
-                  </div>
+                  <BuyerSection item={item} />
                 )}
               </div>
               <Accordion
                 type="multiple"
-                className="w-full border rounded-lg"
+                className="w-full rounded-lg border"
                 defaultValue={["item-1"]}
               >
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="px-6 data-[state=open]:border-b">
                     Description
                   </AccordionTrigger>
-                  <AccordionContent className="px-6 py-6 max-h-36 overflow-y-auto">
+                  <AccordionContent className="max-h-36 overflow-y-auto px-6 py-6">
                     {item.description}
                   </AccordionContent>
                 </AccordionItem>
@@ -168,7 +106,7 @@ export const Item = () => {
                   <AccordionTrigger className="px-6 data-[state=open]:border-b">
                     Price History
                   </AccordionTrigger>
-                  <AccordionContent className="max-h-60 pb-0 overflow-y-auto">
+                  <AccordionContent className="max-h-60 overflow-y-auto pb-0">
                     {item.sales === undefined || item.sales.length === 0 ? (
                       <div className="px-6 py-6">no data</div>
                     ) : (

@@ -158,6 +158,26 @@ app.get("/user/:address/collected", async (req, res, next) => {
   }
 });
 
+// get nfts a user created, for create nft page
+app.get("/user/:address/offered", async (req, res, next) => {
+  try {
+    const nfts = await prisma.user
+      .findUnique({
+        where: {
+          address: req.params.address,
+        },
+      })
+      .offers({
+        include: {
+          nft: true,
+        },
+      });
+    res.status(200).json(nfts);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.patch("/nfts/:tokenId", async (req, res, next) => {
   try {
     const tokenId = parseInt(req.params.tokenId);
@@ -252,6 +272,36 @@ app.patch("/nfts/buy/:tokenId", async (req, res, next) => {
       },
     });
     res.status(201).json(upadatedNft);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/offer", async (req, res, next) => {
+  try {
+    const offer = await prisma.offer.create({
+      data: {
+        price: req.body.price,
+        createAt: req.body.createAt,
+        expireAt: req.body.expireAt,
+        from: {
+          connectOrCreate: {
+            where: {
+              address: req.body.fromAddress,
+            },
+            create: {
+              address: req.body.fromAddress,
+            },
+          },
+        },
+        nft: {
+          connect: {
+            tokenId: req.body.nftId,
+          },
+        },
+      },
+    });
+    res.status(201).json(offer);
   } catch (error) {
     next(error);
   }

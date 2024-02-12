@@ -21,6 +21,7 @@ import { useState } from "react";
 import { formInputType } from ".";
 import NFT from "../../../../smart_contract/artifacts/contracts/NFT.sol/NFT.json";
 import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import { zeroAddr } from "@/constant";
 
 const JWT = import.meta.env.VITE_JWT;
 const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
@@ -147,7 +148,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
       imageUrl: fileUrl,
       price: 0.0,
       listed: false,
-      ownerAddress: "0x0000000000000000000000000000000000000000",
+      ownerAddress: zeroAddr,
       creatorAddress: creatorAddress,
     };
     const apiURL = "http://localhost:4000";

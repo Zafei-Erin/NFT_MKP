@@ -1,5 +1,5 @@
 import { useWallet } from "@/context/walletProvider";
-import { NFT } from "@/types/types";
+import { Offer } from "@/types/types";
 import { Link } from "react-router-dom";
 import useSWR, { Fetcher } from "swr";
 import { ListModal } from "../../components/ListModal";
@@ -8,33 +8,35 @@ import { zeroAddr } from "@/constant";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
-const fetcher: Fetcher<NFT[], string> = (url: string) =>
+const fetcher: Fetcher<Offer[], string> = (url: string) =>
   fetch(url).then((data) => data.json());
 
-export const Created = () => {
+export const Offered = () => {
   const { accountAddr } = useWallet();
 
-  const { data: nfts } = useSWR(
-    `${apiURL}/user/${accountAddr}/created`,
+  const { data: offers } = useSWR(
+    `${apiURL}/user/${accountAddr}/offered`,
     fetcher,
     {
       suspense: true,
     },
   );
 
-  if (!nfts || !nfts.length) {
+  if (!offers || !offers.length) {
     return <>no data</>;
   }
 
   return (
     <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      {nfts.map((nft) => {
+      {offers.map((offer, index) => {
+        const nft = offer.nft;
+        console.log(offer, nft);
         return (
           <div
-            key={nft.id}
+            key={index}
             className="group relative aspect-[2/3] overflow-hidden rounded-lg shadow-md hover:cursor-pointer"
           >
-            <Link to={`/item/${nft.tokenId}`}>
+            <Link to={`/item/${nft.tokenId}}`}>
               <div className="h-full">
                 <img src={nft.imageUrl} className="h-2/3 w-full object-cover" />
                 <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4">
