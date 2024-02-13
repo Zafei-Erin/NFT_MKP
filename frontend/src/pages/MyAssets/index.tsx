@@ -6,7 +6,6 @@ import { NotConnectedPage } from "@/components/NotConnectedPage";
 import { Collected } from "./Collected";
 import { useSearchParams } from "react-router-dom";
 import { Offered } from "./Offered";
-import { TTable } from "./TTable";
 
 const DEFAULT_TAB = "collected";
 
@@ -69,7 +68,7 @@ export const MyAssets = () => {
           {accountAddr ? <Created /> : <NotConnectedPage />}
         </TabsContent>
         <TabsContent value="offers-made">
-          {accountAddr ? <TTable /> : <NotConnectedPage />}
+          {accountAddr ? <Offered /> : <NotConnectedPage />}
         </TabsContent>
       </Tabs>
     </div>

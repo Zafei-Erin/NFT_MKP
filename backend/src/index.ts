@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import express from "express";
 import { errorHandler } from "./middlewares/errorHandler";
 import { z } from "zod";
+import { Offer } from "./types";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -302,6 +303,34 @@ app.post("/offer", async (req, res, next) => {
       },
     });
     res.status(201).json(offer);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch("/offer/:id", async (req, res, next) => {
+  try {
+    const newOffer = Offer.parse(req.body);
+    const { id } = req.params;
+    const updatedOffer = await prisma.offer.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...newOffer,
+      },
+    });
+    res.status(201).json(updatedOffer);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete("/offer/:id", async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const removedOffer = await prisma.offer.delete({
+      where: { id: id },
+    });
+    res.status(201).json(removedOffer);
   } catch (error) {
     next(error);
   }

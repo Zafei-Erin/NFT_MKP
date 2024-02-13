@@ -19,7 +19,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
-import { Offer } from "@/types/types";
+import { EthPriceType, Offer } from "@/types/types";
 import useSWR, { Fetcher } from "swr";
 
 type OfferTableProps = {
@@ -28,9 +28,7 @@ type OfferTableProps = {
 
 type OfferWithUSD = Offer & { priceUSD: number };
 
-type EthPriceType = {
-  ethusd: string;
-};
+
 
 const columnHelper = createColumnHelper<OfferWithUSD>();
 

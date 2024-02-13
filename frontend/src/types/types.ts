@@ -16,6 +16,7 @@ export type NFT = {
 };
 
 export type User = {
+  id: number;
   address: string;
   createdNFTs: NFT[];
   ownNFTs: NFT[];
@@ -23,6 +24,7 @@ export type User = {
 };
 
 export type Offer = {
+  id: number;
   price: number;
   createAt: Date;
   expireAt: Date;
@@ -33,8 +35,13 @@ export type Offer = {
 };
 
 export type Sale = {
+  id: number;
   price: number;
   date: Date;
   nft: NFT;
-  nftId: number; 
+  nftId: number;
+};
+
+export type EthPriceType = {
+  ethusd: string;
 };

@@ -79,7 +79,7 @@ export const BuyerSection: React.FC<BuyerSectionProps> = ({ item }) => {
         <div>
           <div className="pb-3 text-lg font-semibold">Offers</div>
           <OfferTable offers={item.offers} />
-          <OfferModal item={item}>
+          <OfferModal tokenId={item.tokenId}>
             <button className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100">
               Place Offer
             </button>
