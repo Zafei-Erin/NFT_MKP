@@ -1,4 +1,7 @@
+import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/lib/utils";
 import { ethers } from "ethers";
+import { XCircle } from "lucide-react";
 import { ReactNode, createContext, useContext, useState } from "react";
 
 type WalletContextType = {
@@ -16,19 +19,29 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [provider, setProvider] = useState<
     ethers.providers.Web3Provider | undefined
   >();
+  const { toast } = useToast();
 
   const connect = async () => {
     if (typeof window.ethereum !== "undefined") {
       const metaMaskProvider = window.ethereum.providers.find(
-        (p) => p.isMetaMask
+        (p) => p.isMetaMask,
       );
       try {
         const account = await metaMaskProvider.request({
           method: "eth_requestAccounts",
         });
         setAccountAddr(account[0]);
-      } catch (error) {
-        console.log("err: ", error);
+      } catch (err) {
+        const message = getErrorMessage(err);
+        toast({
+          title: (
+            <div className="flex items-center justify-start gap-1">
+              <XCircle className="h-5 w-5 text-red-600" />
+              Failed to Connect Wallet
+            </div>
+          ),
+          description: message,
+        });
       } finally {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(provider);
@@ -52,7 +65,7 @@ const useWallet = () => {
 
   if (!userAccContext) {
     throw new Error(
-      "UserAccContext has to be used within <UserAccContext.Provider>"
+      "UserAccContext has to be used within <UserAccContext.Provider>",
     );
   }
 

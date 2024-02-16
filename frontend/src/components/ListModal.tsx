@@ -9,13 +9,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useWallet } from "@/context/walletProvider";
-import { NFT } from "@/types/types";
 import { ethers } from "ethers";
 import { ReactNode, useState } from "react";
-import useSWR, { Fetcher } from "swr";
 
-import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
 import { Spinner } from "@/assets";
+import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
 
 type ListModalProps = {
   tokenId: number;
@@ -29,7 +27,6 @@ const nftaddress = import.meta.env.VITE_NFT_ADDRESS;
 export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
   const { accountAddr, provider, connect } = useWallet();
   const [price, setPrice] = useState("");
-  const [shouldUpdate, setShouldUpdate] = useState(false);
   const [listing, setListing] = useState(false);
 
   // list create in market
@@ -57,7 +54,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
         },
       );
       await transaction.wait();
-      setShouldUpdate(true);
+      updateDB();
       setListing(false);
     } catch (error) {
       console.log(error);
@@ -66,22 +63,15 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
 
   // update database
   const params = { userAddr: accountAddr, price: price, listed: true };
-  const fetcher: Fetcher<NFT, string> = async (url: string) =>
-    fetch(url, {
+
+  const updateDB = async () => {
+    await fetch(`${api}/nfts/${tokenId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
-    }).then((data) => data.json());
-
-  const { data: nft, isLoading } = useSWR(
-    shouldUpdate ? `${api}/nfts/${tokenId}` : null,
-    fetcher,
-    { suspense: true },
-  );
-
-  if (nft && !isLoading) {
+    });
     window.location.reload();
-  }
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>

@@ -22,10 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 import { useWallet } from "@/context/walletProvider";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
+import { CheckCircle2 } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 
 type OfferModalProps = {
@@ -43,6 +45,7 @@ export const OfferModal: React.FC<OfferModalProps> = ({
   const [date, setDate] = useState<Date>();
   const [price, setPrice] = useState(0);
   const { accountAddr } = useWallet();
+  const { toast } = useToast();
 
   useEffect(() => {
     setDate(addDays(new Date(), DEFAULT_EXPIRE_AT));
@@ -62,13 +65,22 @@ export const OfferModal: React.FC<OfferModalProps> = ({
       nftId: tokenId,
     };
 
-    const response = await fetch(`${apiURL}/offer`, {
+    const response = await fetch(`${apiURL}/offers`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(offer),
     });
-    const data = await response.json();
-    console.log(data);
+    await response.json();
+    toast({
+      title: (
+        <div className="flex items-center justify-start gap-1">
+          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+          Place Offer Successfully!
+        </div>
+      ),
+      description: "Your offer is created!",
+    });
+    window.location.reload();
   };
 
   const reset = () => {

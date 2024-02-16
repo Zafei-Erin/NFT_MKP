@@ -8,71 +8,68 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useWallet } from "@/context/walletProvider";
-import { Offer } from "@/types/types";
-import { CheckCircle2 } from "lucide-react";
-import { ReactNode } from "react";
-import { useToast } from "./ui/use-toast";
+import { ReactNode, useState } from "react";
 
-type EditOfferModalProps = {
-  offer: Offer;
+import { useWallet } from "@/context/walletProvider";
+import { useToast } from "@/components/ui/use-toast";
+import { CheckCircle2 } from "lucide-react";
+
+type EditDescriptionModalProps = {
+  tokenId: number;
+  description: string;
   children: ReactNode;
 };
 
 const apiURL = import.meta.env.VITE_API_URL;
 
-export const RemoveOfferModal: React.FC<EditOfferModalProps> = ({
+export const EditDescriptionModal: React.FC<EditDescriptionModalProps> = ({
   children,
-  offer,
+  description,
+  tokenId,
 }) => {
   const { accountAddr } = useWallet();
+  const [text, setText] = useState(description);
   const { toast } = useToast();
 
-  const removeOffer = async () => {
-    if (!accountAddr) {
-      console.log("continue: ", accountAddr);
-      return;
-    }
-
-    const response = await fetch(`${apiURL}/offer/${offer.id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    await response.json();
+  const params = {
+    userAddr: accountAddr,
+    description: text,
   };
 
-  const action = () => {
-    removeOffer();
+  const updateDB = async () => {
+    await fetch(`${apiURL}/nfts/${tokenId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
     toast({
       title: (
         <div className="flex items-center justify-start gap-1">
           <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          Edit Offer Successfully!
+          Edit Description Successfully!
         </div>
       ),
-      description: "Your NFT is created!",
     });
-    window.location.reload();
   };
+  console.log(111);
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent className=" overflow-auto">
         <AlertDialogHeader>
-          <AlertDialogTitle>Cancel offer</AlertDialogTitle>
-          <div className="">Do you confirm to remove this offer?</div>
+          <AlertDialogTitle>Edit NFT description</AlertDialogTitle>
+          <textarea
+            id="description"
+            placeholder="Enter a description"
+            value={text}
+            className="text-md h-fit min-h-32 w-full appearance-none rounded-lg border p-3 text-zinc-500 placeholder:text-zinc-500 focus:outline-none "
+            onChange={(e) => setText(e.target.value)}
+          />
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              action();
-            }}
-          >
-            Continue
-          </AlertDialogAction>
+          <AlertDialogAction onClick={updateDB}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

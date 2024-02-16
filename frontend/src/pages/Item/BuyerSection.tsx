@@ -1,91 +1,87 @@
 import { NFT } from "@/types/types";
 import { BuyModal } from "./BuyModal";
-import { OfferTable } from "./OfferTable";
-import { ethers } from "ethers";
-
-import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
-import { useWallet } from "@/context/walletProvider";
-import { useState } from "react";
 import { OfferModal } from "./OfferModal";
+import { useWallet } from "@/context/walletProvider";
+import { ConnectWalletModal } from "@/components/ConnectWalletModal";
+import { ShoppingCart, Tag } from "lucide-react";
 
 type BuyerSectionProps = {
   item: NFT;
 };
 
-const apiURL = import.meta.env.VITE_API_URL;
-const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
-const nftaddress = import.meta.env.VITE_NFT_ADDRESS;
-
 export const BuyerSection: React.FC<BuyerSectionProps> = ({ item }) => {
-  const [loading, setLoading] = useState(false);
-  const { provider, accountAddr } = useWallet();
-  const buyItemInMKP = async (provider: ethers.providers.Web3Provider) => {
-    const signer = provider.getSigner();
-    const marketContract = new ethers.Contract(
-      nftmarketaddress,
-      NFTMarketPlace.abi,
-      signer,
+  const { accountAddr } = useWallet();
+
+  if (!item.listed) {
+    return (
+      <div>
+        <div className="flex w-full flex-col items-start justify-start gap-3 rounded-lg border p-6">
+          <div className="text-sm text-gray-600">Status</div>
+          <div className="text-xl font-semibold text-gray-600 sm:text-3xl">
+            This item is not listing
+          </div>
+          <div className="flex h-full w-full flex-col  gap-3 md:flex-row">
+            {accountAddr === "" ? (
+              <ConnectWalletModal>
+                <button className="flex w-full items-center justify-center gap-1 rounded-xl border-2 border-sky-600 py-2 text-lg font-semibold text-sky-600 hover:bg-gray-100 hover:text-sky-700">
+                  <Tag className="h-5 w-5" />
+                  Place Offer
+                </button>
+              </ConnectWalletModal>
+            ) : (
+              <OfferModal tokenId={item.tokenId}>
+                <button className="flex w-full items-center justify-center gap-1 rounded-xl border-2 border-sky-600 py-2 text-lg font-semibold text-sky-600 hover:bg-gray-100 hover:text-sky-700">
+                  <Tag className="h-5 w-5" />
+                  Place Offer
+                </button>
+              </OfferModal>
+            )}
+          </div>
+        </div>
+      </div>
     );
-
-    const marketTxn = await marketContract.createMarketSale(
-      nftaddress,
-      item.tokenId,
-      {
-        value: ethers.utils.parseUnits(item.price.toString(), "ether"),
-      },
-    );
-    await marketTxn.wait();
-  };
-  const params = {
-    ownerAddr: accountAddr,
-    date: Date.now(),
-    price: item ? item.price : 0,
-  };
-
-  const updateDB = async () => {
-    fetch(`${apiURL}/nfts/buy/${item.tokenId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params),
-    });
-  };
-
-  const buyNFT = () => {
-    if (!provider || !accountAddr) {
-      console.log("please connect wallet");
-      return;
-    }
-    setLoading(true);
-    buyItemInMKP(provider);
-    updateDB();
-    setLoading(false);
-  };
+  }
 
   return (
     <div>
-      {item.listed ? (
-        <div className="flex w-full flex-col items-start justify-start gap-3 rounded-lg border p-6">
-          <div className="text-sm text-gray-600">Price</div>
-          <div className="text-xl font-semibold sm:text-3xl">
-            {item.price} ETH
-          </div>
-          <BuyModal item={item} action={buyNFT}>
-            <button className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100">
-              Buy
-            </button>
-          </BuyModal>
+      <div className="flex w-full flex-col items-start justify-start gap-3 rounded-lg border p-6">
+        <div className="text-sm text-gray-600">Price</div>
+        <div className="text-xl font-semibold sm:text-3xl">
+          {item.price} ETH
         </div>
-      ) : (
-        <div>
-          <div className="pb-3 text-lg font-semibold">Offers</div>
-          <OfferTable offers={item.offers} />
-          <OfferModal tokenId={item.tokenId}>
-            <button className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100">
-              Place Offer
-            </button>
-          </OfferModal>
+        <div className="flex h-full w-full flex-col  gap-3 md:flex-row">
+          {accountAddr === "" ? (
+            <ConnectWalletModal>
+              <button className="flex w-full items-center justify-center gap-1 rounded-xl bg-sky-600 py-2 text-lg font-semibold text-gray-100 hover:bg-sky-700">
+                <ShoppingCart className="h-5 w-5" />
+                Buy
+              </button>
+            </ConnectWalletModal>
+          ) : (
+            <BuyModal item={item}>
+              <button className="flex w-full items-center justify-center gap-1 rounded-xl bg-sky-600 py-2 text-lg font-semibold text-gray-100 hover:bg-sky-700">
+                <ShoppingCart className="h-5 w-5" />
+                Buy
+              </button>
+            </BuyModal>
+          )}
+          {accountAddr === "" ? (
+            <ConnectWalletModal>
+              <button className="flex w-full items-center justify-center gap-1 rounded-xl border-2 border-sky-600 py-2 text-lg font-semibold text-sky-600 hover:bg-gray-100 hover:text-sky-700">
+                <Tag className="h-5 w-5" />
+                Place Offer
+              </button>
+            </ConnectWalletModal>
+          ) : (
+            <OfferModal tokenId={item.tokenId}>
+              <button className="flex w-full items-center justify-center gap-1 rounded-xl border-2 border-sky-600 py-2 text-lg font-semibold text-sky-600 hover:bg-gray-100 hover:text-sky-700">
+                <Tag className="h-5 w-5" />
+                Place Offer
+              </button>
+            </OfferModal>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

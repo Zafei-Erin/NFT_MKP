@@ -115,12 +115,12 @@ export const Offered: React.FC = () => {
       cell: ({ row }) => {
         const price = parseFloat(row.getValue("price"));
 
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
+        const formatted = new Intl.NumberFormat(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 6,
         }).format(price);
 
-        return <div>{formatted}</div>;
+        return <div>${formatted}</div>;
       },
     }),
     columnHelper.accessor("price", {

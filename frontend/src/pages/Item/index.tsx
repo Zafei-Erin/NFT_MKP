@@ -6,10 +6,14 @@ import {
 } from "@/components/ui/accordion";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { useWallet } from "@/context/walletProvider";
+import { isCurrentOwner } from "@/lib/utils";
 import { NFT } from "@/types/types";
+import { Pencil } from "lucide-react";
 import { useParams } from "react-router-dom";
 import useSWR, { Fetcher } from "swr";
 import { BuyerSection } from "./BuyerSection";
+import { EditDescriptionModal } from "./EditDescriptionModal";
+import { OfferTable } from "./OfferTable";
 import { OwnerSection } from "./OwnerSection";
 import { PriceChart } from "./PriceChart";
 
@@ -24,6 +28,11 @@ export const Item = () => {
   const { data: item } = useSWR(`${apiURL}/nfts/${tokenId}`, dataFetcher, {
     suspense: true,
   });
+  const isOwner = isCurrentOwner(
+    item.ownerAddress,
+    item.creatorAddress,
+    accountAddr,
+  );
 
   return (
     <div>
@@ -36,8 +45,8 @@ export const Item = () => {
               <div className="space-y-2">
                 <h3 className="text-4xl font-semibold">{item.name}</h3>
                 <p>
-                  Owned by {item.ownerAddress.slice(0, 4)}...
-                  {item.ownerAddress.slice(38)}
+                  Created by {item.creatorAddress.slice(0, 4)}...
+                  {item.creatorAddress.slice(38)}
                 </p>
               </div>
               {/* upload img input */}
@@ -55,12 +64,15 @@ export const Item = () => {
             {/* second part */}
             <div className="flex w-full flex-col justify-start gap-8">
               <div>
-                {item.ownerAddress.toLowerCase() ===
-                accountAddr.toLowerCase() ? (
+                {isOwner ? (
                   <OwnerSection item={item} />
                 ) : (
                   <BuyerSection item={item} />
                 )}
+              </div>
+              <div>
+                <div className="text-lg font-semibold">Offers</div>
+                <OfferTable nftId={item.tokenId} />
               </div>
               <Accordion
                 type="multiple"
@@ -69,7 +81,17 @@ export const Item = () => {
               >
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="px-6 data-[state=open]:border-b">
-                    Description
+                    <div className="flex items-center justify-start gap-2">
+                      Description
+                      {isOwner && (
+                        <EditDescriptionModal
+                          tokenId={item.tokenId}
+                          description={item.description}
+                        >
+                          <Pencil className="h-4 w-4 stroke-gray-500 hover:cursor-pointer hover:stroke-gray-900" />
+                        </EditDescriptionModal>
+                      )}
+                    </div>
                   </AccordionTrigger>
                   <AccordionContent className="max-h-36 overflow-y-auto px-6 py-6">
                     {item.description}

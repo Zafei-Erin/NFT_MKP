@@ -3,11 +3,8 @@ import useSWR, { Fetcher } from "swr";
 import { ImgCarousel } from "./ImgCarousel";
 import { NewestNFTTable } from "./NewestNFTTable";
 import { CheapestNFTTable } from "./CheapestNFTTable";
-
-export type FetchRequest = {
-  url: string;
-  params: Record<string, string>;
-};
+import { GetNFTRequest } from "@backend/apitypes";
+import { FetchRequest } from "@/types/fetchers";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
@@ -17,10 +14,11 @@ const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
 };
 
 export const Home = () => {
-  // todo: fetch top 10
-  const params = {
-    offset: 6,
+  const params: GetNFTRequest = {
+    take: 6,
     skip: 0,
+    sortBy: "tokenId",
+    sortDir: "desc",
   };
   const { data: nfts } = useSWR(
     { url: `${apiURL}/nfts`, params: params },

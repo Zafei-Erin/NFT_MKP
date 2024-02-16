@@ -3,7 +3,7 @@ import { HeaderSideMenu } from "./HeaderSideMenu";
 import { LightLogo } from "../assets";
 import { Button } from "./ui/button";
 import HeaderToggleIcon from "@/assets/HeaderToggleIcon";
-import { ConnectWallet } from "./ConnectWallet";
+import { ConnectWalletBtn } from "./ConnectWalletBtn";
 
 export const Header = () => {
   ("");
@@ -32,7 +32,7 @@ export const Header = () => {
           </Link>
         </div>
         <div className="max-md:hidden">
-          <ConnectWallet />
+          <ConnectWalletBtn />
         </div>
 
         <HeaderSideMenu>

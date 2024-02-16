@@ -39,8 +39,8 @@ model Offer {
   expireAt DateTime
   from User @relation(fields: [fromAddress], references: [address]) 
   fromAddress String 
-  nft Nft @relation(fields: [nftId], references: [id])
-  nftId Int 
+  nft Nft @relation(fields: [nftTokenId], references: [tokenId])
+  nftTokenId Int
 }
 
 model Sale {

@@ -13,6 +13,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 type TopTableParams = {
   nfts: NFT[];
@@ -28,13 +29,16 @@ export const NewestNFTTable: React.FC<TopTableParams> = ({ nfts }) => {
     {
       id: "collection",
       accessorFn: (row) => {
-        return [row.imageUrl, row.name, row.creatorAddress];
+        return [row.imageUrl, row.name, row.creatorAddress, row.tokenId];
       },
       header: () => <div className="text-start">Collection</div>,
       cell: (row) => {
-        const [imageUrl, name, creatorAddress] = row.getValue();
+        const [imageUrl, name, creatorAddress, tokenId] = row.getValue();
         return (
-          <div className="flex items-center justify-start gap-3">
+          <Link
+            to={`/item/${tokenId}`}
+            className="flex items-center justify-start gap-3 rounded-lg p-3 hover:bg-gray-100"
+          >
             <img
               src={imageUrl}
               className="aspect-square w-auto min-w-12 max-w-16 rounded-lg"
@@ -50,7 +54,7 @@ export const NewestNFTTable: React.FC<TopTableParams> = ({ nfts }) => {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         );
       },
     },

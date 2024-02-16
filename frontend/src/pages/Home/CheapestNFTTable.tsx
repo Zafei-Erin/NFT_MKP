@@ -15,6 +15,8 @@ import {
 } from "@tanstack/react-table";
 import useSWR, { Fetcher } from "swr";
 import { FetchRequest } from ".";
+import { GetNFTRequest } from "@backend/apitypes";
+import { Link } from "react-router-dom";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
@@ -23,21 +25,12 @@ const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
   return fetch(newUrl).then((data) => data.json());
 };
 
-type FetchQuery = {
-  offset?: number;
-  skip?: number;
-  orderBy?: string;
-  order?: "asc" | "desc";
-  filterBy?: keyof NFT;
-  filterBool?: boolean;
-};
-
 export const CheapestNFTTable: React.FC = () => {
-  const params: FetchQuery = {
-    offset: 6,
+  const params: GetNFTRequest = {
+    take: 6,
     skip: 0,
-    orderBy: "price",
-    order: "asc",
+    sortBy: "price",
+    sortDir: "asc",
     filterBy: "listed",
     filterBool: true,
   };
@@ -58,13 +51,16 @@ export const CheapestNFTTable: React.FC = () => {
     {
       id: "collection",
       accessorFn: (row) => {
-        return [row.imageUrl, row.name, row.creatorAddress];
+        return [row.imageUrl, row.name, row.creatorAddress, row.tokenId];
       },
       header: () => <div className="text-start">Collection</div>,
       cell: (row) => {
-        const [imageUrl, name, creatorAddress] = row.getValue();
+        const [imageUrl, name, creatorAddress, tokenId] = row.getValue();
         return (
-          <div className="flex items-center justify-start gap-3">
+          <Link
+            to={`/item/${tokenId}`}
+            className="flex items-center justify-start gap-3 rounded-lg p-3 hover:bg-gray-100"
+          >
             <img
               src={imageUrl}
               className="aspect-square w-auto min-w-12 max-w-16 rounded-lg"
@@ -80,7 +76,7 @@ export const CheapestNFTTable: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         );
       },
     },

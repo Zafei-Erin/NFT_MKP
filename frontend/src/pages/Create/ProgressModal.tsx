@@ -219,11 +219,11 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
             {staus === "error" ? "Oops" : "Creating NFT"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            <p>This process could take a while...</p>
             {staus === "error" ? (
               error
             ) : (
               <div className=" mt-3 space-y-4 text-base">
+                <p>This process could take a while...</p>
                 <div className="flex items-center justify-start gap-2">
                   {staus === "uploadingImg" ? (
                     <Spinner className="h-6 w-6" />

@@ -58,13 +58,30 @@ describe("NFTMarketplace", function () {
     });
 
     // create a sale
-    const [_, buyerAddress] = await ethers.getSigners();
+    const [buyerAddress1, buyerAddress] = await ethers.getSigners();
     await market
       .connect(buyerAddress)
       .createMarketSale(nftContractAddress, tokenId1, { value: auctionPrice });
 
+    await market.createMarketListing(
+      nftContractAddress,
+      tokenId1,
+      auctionPrice,
+      {
+        value: listingPrice,
+      }
+    );
+
+    // const tx = await nft.setApprovalForAll(buyerAddress1, true);
+    // await tx.wait();
+
+    // buy it back
+    await market
+      .connect(buyerAddress1)
+      .createMarketSale(nftContractAddress, tokenId1, { value: auctionPrice });
+
     // cancel listing
-    await market.cancelListing(tokenId2); 
+    await market.cancelListing(tokenId2);
 
     let items = await market.fetchMarketItems();
     items = await Promise.all(

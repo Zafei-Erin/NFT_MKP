@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useWallet } from "../context/walletProvider";
 import { buttonVariants } from "@/components/ui/button";
 
-export const ConnectWallet = () => {
+export const ConnectWalletBtn = () => {
   const { accountAddr, setAccountAddr, provider, connect } = useWallet();
 
   const updateAccount = (account: string[]) => {

@@ -23,14 +23,15 @@ export const getOffersByNFT = async (
 
     const offers = await prisma.offer.findMany({
       where: {
-        nftId: parseInt(tokenId),
+        nftTokenId: parseInt(tokenId),
       },
       skip: queryWithDefault.skip,
       take: queryWithDefault.take,
       orderBy: {
-        [sortBy]: sortBy,
+        [sortBy]: queryWithDefault.sortDir,
       },
     });
+
     res.status(200).json(offers);
   } catch (error) {
     next(error);
