@@ -170,6 +170,7 @@ export const Offered: React.FC = () => {
     }),
     columnHelper.accessor((row) => row, {
       id: "remove",
+      header: "",
       cell: (row) => {
         const offer = row.getValue();
         return (

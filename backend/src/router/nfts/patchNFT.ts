@@ -9,7 +9,6 @@ export const patchNFT = async (
   try {
     const tokenId = parseInt(req.params.tokenId);
     const { userAddr, ...rest } = req.body;
-    console.log("userAddr: ", userAddr, rest);
     const nft = await prisma.nft.findUnique({
       where: {
         tokenId: tokenId,
@@ -42,7 +41,6 @@ export const patchNFT = async (
       };
     }
 
-    // bug here
     const upadatedNft = await prisma.nft.update({
       where: {
         tokenId: tokenId,

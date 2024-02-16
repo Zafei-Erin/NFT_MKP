@@ -20,7 +20,7 @@ export const buyNFT = async (
       throw Error("cannot find this nft");
     }
 
-    const sale = await prisma.sale.create({
+    await prisma.sale.create({
       data: {
         price: parseFloat(price),
         date: new Date(date),

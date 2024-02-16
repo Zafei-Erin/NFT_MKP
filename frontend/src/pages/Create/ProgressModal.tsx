@@ -3,7 +3,6 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -15,13 +14,13 @@ import { useNavigate } from "react-router-dom";
 
 import { Spinner } from "@/assets";
 import { useToast } from "@/components/ui/use-toast";
+import { zeroAddr } from "@/constant";
 import { useWallet } from "@/context/walletProvider";
 import { CheckCircle2, CircleDotDashed } from "lucide-react";
 import { useState } from "react";
 import { formInputType } from ".";
 import NFT from "../../../../smart_contract/artifacts/contracts/NFT.sol/NFT.json";
 import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
-import { zeroAddr } from "@/constant";
 
 const JWT = import.meta.env.VITE_JWT;
 const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
@@ -218,12 +217,15 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
           <AlertDialogTitle>
             {staus === "error" ? "Oops" : "Creating NFT"}
           </AlertDialogTitle>
-          <AlertDialogDescription>
-            {staus === "error" ? (
-              error
-            ) : (
-              <div className=" mt-3 space-y-4 text-base">
-                <p>This process could take a while...</p>
+
+          {staus === "error" ? (
+            error
+          ) : (
+            <div>
+              <p className="text-sm text-gray-500">
+                This process could take a while...
+              </p>
+              <div className="mt-3 space-y-4 text-base text-gray-500">
                 <div className="flex items-center justify-start gap-2">
                   {staus === "uploadingImg" ? (
                     <Spinner className="h-6 w-6" />
@@ -253,8 +255,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({ formInput }) => {
                   <p>Deploying NFT to market place</p>
                 </div>
               </div>
-            )}
-          </AlertDialogDescription>
+            </div>
+          )}
         </AlertDialogHeader>
         {staus === "error" && error === ErrorMessageMapping.notConnected ? (
           <AlertDialogFooter>
