@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      matrix: { dir: ["backend", "frontend", "smart_contract"] }
+      matrix: { dir: ["./backend", "./frontend", "smart_contract"] }
 
     steps:
       - name: Checkout repo
@@ -25,9 +25,11 @@ jobs:
 
       - name: Install deps
         run: npm install
+        working-directory: ${{ matrix.dir }}
 
       - name: Run CI
         run: npm ci
+        working-directory: ${{ matrix.dir }}
 
   docker:
     runs-on: ubuntu-latest
