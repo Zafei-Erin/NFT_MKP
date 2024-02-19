@@ -1,7 +1,5 @@
 services:
-  backend:
-    container_name: NFT_MP_Backend
-    image: backend
+  api:
     build:
       context: .
       dockerfile: backend.dockerfile
