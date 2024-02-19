@@ -4,9 +4,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
+COPY prisma ./prisma
+
 RUN npm install
 
-COPY prisma ./prisma
+RUN  cp -r node_modules/zod node_modules/@types 
 
 RUN npx prisma generate
 
