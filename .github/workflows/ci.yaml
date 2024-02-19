@@ -51,6 +51,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          file: ./backend/backend.dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nft-mkp-api:latest
