@@ -1,18 +1,18 @@
 services:
   api:
+    container_name: nft-api
     build:
       context: .
-      dockerfile: backend.dockerfile
     ports:
       - 4000:4000
     environment:
       - DATABASE_URL=${DATABASE_URL}
     develop:
       watch:
-        - path: ./backend/package.json
+        - path: /package.json
           action: rebuild
-        - path: ./backend/package-lock.json
+        - path: /package-lock.json
           action: rebuild
-        - path: ./backend
+        - path: ./
           target: /app
           action: sync
