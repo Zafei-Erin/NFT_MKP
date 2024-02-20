@@ -2,8 +2,8 @@ import { useWallet } from "@/context/walletProvider";
 import { NFT as NFTType } from "@/types/types";
 import { ethers } from "ethers";
 import { useState } from "react";
-import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
-import NFT from "../../../smart_contract/artifacts/contracts/NFT.sol/NFT.json";
+import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
+import NFT from "@/constant/NFT.json";
 import axios from "axios";
 
 const nftmarketaddress = import.meta.env.VITE_MKP_ADDRESS;
@@ -17,18 +17,18 @@ export const TestButton = () => {
     const marketContract = new ethers.Contract(
       nftmarketaddress,
       NFTMarketPlace.abi,
-      provider?.getSigner()
+      provider?.getSigner(),
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
     const data = await marketContract.fetchMarketItems();
 
     const items: NFTType[] = await Promise.all(
-      data.map(async (i) => {
+      data.map(async (i: NFTType) => {
         const price = ethers.utils.formatUnits(i.price.toString(), "ether");
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
         const item = {
-          tokenId: i.tokenId.toNumber(),
+          tokenId: i.tokenId,
           price: price,
           listed: i.listed,
           creator: i.creator,
@@ -36,7 +36,7 @@ export const TestButton = () => {
           imgURL: meta.data.image,
         };
         return item;
-      })
+      }),
     );
     console.log(items);
     setItems(items);

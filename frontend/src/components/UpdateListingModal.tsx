@@ -15,7 +15,7 @@ import { ethers } from "ethers";
 import { ReactNode, useState } from "react";
 import useSWR, { Fetcher } from "swr";
 
-import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
 
 type ListModalProps = {
   tokenId: number;
