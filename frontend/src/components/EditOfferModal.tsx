@@ -37,13 +37,14 @@ type EditOfferModalProps = {
 };
 
 const apiURL = import.meta.env.VITE_API_URL;
+const MIN_PRICE = 0.001;
 
 export const EditOfferModal: React.FC<EditOfferModalProps> = ({
   children,
   offer,
 }) => {
   const [date, setDate] = useState<Date>();
-  const [price, setPrice] = useState(offer.price);
+  const [price, setPrice] = useState<number>(offer.price);
   const { accountAddr } = useWallet();
   const { toast } = useToast();
 
@@ -52,21 +53,16 @@ export const EditOfferModal: React.FC<EditOfferModalProps> = ({
   }, []);
 
   const placeOffer = async () => {
-    if (price <= 0 || !accountAddr || !date) {
-      console.log("continue: ", price, accountAddr, date);
-      return;
-    }
-
     const newOffer = {
       id: offer.id,
       price: price,
       createAt: new Date(),
       expireAt: date,
       fromAddress: accountAddr.toLowerCase(),
-      nftId: offer.nftId,
+      nftTokenId: offer.nftTokenId,
     };
 
-    const response = await fetch(`${apiURL}/offer/${offer.id}`, {
+    const response = await fetch(`${apiURL}/offers/${offer.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newOffer),
@@ -80,8 +76,13 @@ export const EditOfferModal: React.FC<EditOfferModalProps> = ({
     setDate(offer.expireAt);
   };
 
-  const action = () => {
-    placeOffer();
+  const action = async () => {
+    if (!price || price < MIN_PRICE || !accountAddr || !date) {
+      console.log("continue: ", price, accountAddr, date);
+      return;
+    }
+
+    await placeOffer();
     toast({
       title: (
         <div className="flex items-center justify-start gap-1">
@@ -96,23 +97,40 @@ export const EditOfferModal: React.FC<EditOfferModalProps> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className=" overflow-auto" onEscapeKeyDown={reset}>
+      <AlertDialogContent className="overflow-auto" onEscapeKeyDown={reset}>
         <AlertDialogHeader>
           <AlertDialogTitle>Edit offer</AlertDialogTitle>
-          <div className=" space-y-6 py-6">
-            <div className="flex items-center justify-between rounded-lg border text-sm">
-              {/* todo: add test, min=0 */}
-              <input
-                type="number"
-                required
-                className="w-full appearance-none rounded-lg rounded-r-none border-r p-3 text-gray-900 placeholder:text-gray-900 focus:outline-none"
-                placeholder="Price"
-                value={price}
-                onChange={(e) => setPrice(e.target.valueAsNumber)}
-              />
-              <div className="basis-1/5 px-3 font-semibold text-gray-900">
-                ETH
+          <div className=" space-y-3 py-6">
+            <div>
+              <div className="flex items-center justify-between rounded-lg border text-sm">
+                {/* todo: add test, min=0 */}
+                <input
+                  type="number"
+                  required
+                  className="w-full appearance-none rounded-lg rounded-r-none border-r p-3 text-gray-900 placeholder:text-gray-900 focus:outline-none"
+                  placeholder="Price"
+                  value={price}
+                  onChange={(e) => {
+                    const num = parseFloat(e.target.value);
+                    if (isNaN(num)) {
+                      setPrice(0);
+                      return;
+                    }
+                    setPrice(num);
+                  }}
+                />
+                <div className="basis-1/5 px-3 font-semibold text-gray-900">
+                  ETH
+                </div>
               </div>
+              <p
+                className={cn(
+                  "p-2 text-sm",
+                  price < MIN_PRICE ? " text-red-600" : " text-transparent",
+                )}
+              >
+                price must be &ge; {MIN_PRICE}
+              </p>
             </div>
             <div className="space-y-3">
               <p className="text-left font-semibold text-gray-950">

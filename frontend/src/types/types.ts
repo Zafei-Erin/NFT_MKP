@@ -31,7 +31,7 @@ export type Offer = {
   from: User;
   fromAddress: string;
   nft: NFT;
-  nftId: number;
+  nftTokenId: number;
 };
 
 export type Sale = {
@@ -39,7 +39,7 @@ export type Sale = {
   price: number;
   date: Date;
   nft: NFT;
-  nftId: number;
+  nftTokenId: number;
 };
 
 export type EthPriceType = {
