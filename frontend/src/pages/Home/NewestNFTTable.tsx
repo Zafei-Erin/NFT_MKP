@@ -20,7 +20,7 @@ type TopTableParams = {
 };
 
 export const NewestNFTTable: React.FC<TopTableParams> = ({ nfts }) => {
-  const columns: ColumnDef<NFT>[] = [
+  const columns: ColumnDef<NFT, Partial<NFT>>[] = [
     {
       id: "rank",
       header: "Rank",
@@ -28,12 +28,10 @@ export const NewestNFTTable: React.FC<TopTableParams> = ({ nfts }) => {
     },
     {
       id: "collection",
-      accessorFn: (row) => {
-        return [row.imageUrl, row.name, row.creatorAddress, row.tokenId];
-      },
+      accessorFn: (row) => ({ ...row }),
       header: () => <div className="text-start">Collection</div>,
       cell: (row) => {
-        const [imageUrl, name, creatorAddress, tokenId] = row.getValue();
+        const { tokenId, imageUrl, name, creatorAddress } = row.getValue();
         return (
           <Link
             to={`/item/${tokenId}`}
@@ -48,7 +46,7 @@ export const NewestNFTTable: React.FC<TopTableParams> = ({ nfts }) => {
               <div className="flex items-center gap-1">
                 <div className="text-xs">creator:</div>
                 <div className="text-xs font-medium">
-                  {creatorAddress.slice(0, 4) +
+                  {creatorAddress && creatorAddress.slice(0, 4) +
                     "..." +
                     creatorAddress.slice(38)}
                 </div>

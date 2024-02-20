@@ -20,7 +20,7 @@ import { useMemo, useState } from "react";
 
 import { EthPriceType, Offer } from "@/types/types";
 import useSWR, { Fetcher } from "swr";
-import { FetchRequest } from "@/types/fetchers";
+import { FetchWithParams } from "@/types/fetchers";
 import { GetOffersRequest } from "@backend/apitypes";
 import { RemoveOfferModal } from "@/components/RemoveOfferModal";
 import { EditIcon, Trash2 } from "lucide-react";
@@ -42,7 +42,7 @@ const ethFetcher: Fetcher<EthPriceType, string> = (url: string) =>
     .then((res) => {
       return res.result;
     });
-const offerFetcher: Fetcher<Offer[], FetchRequest> = ({ url, params }) => {
+const offerFetcher: Fetcher<Offer[], FetchWithParams> = ({ url, params }) => {
   const newUrl = new URL(url);
   newUrl.search = new URLSearchParams(params).toString();
   return fetch(newUrl).then((data) => data.json());
