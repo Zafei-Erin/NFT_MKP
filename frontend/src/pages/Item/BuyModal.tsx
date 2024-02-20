@@ -20,7 +20,7 @@ import { ethers } from "ethers";
 import { ReactNode } from "react";
 
 import { useWallet } from "@/context/walletProvider";
-import NFTMarketPlace from "../../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle2 } from "lucide-react";
 

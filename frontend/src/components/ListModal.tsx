@@ -13,7 +13,7 @@ import { ethers } from "ethers";
 import { ReactNode, useState } from "react";
 
 import { Spinner } from "@/assets";
-import NFTMarketPlace from "../../../smart_contract/artifacts/contracts/NFTMarketplace.sol/NFTMarketPlace.json";
+import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
 
 type ListModalProps = {
   tokenId: number;
