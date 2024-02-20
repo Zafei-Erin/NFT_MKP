@@ -43,7 +43,7 @@ export const CheapestNFTTable: React.FC = () => {
     },
   );
 
-  const columns: ColumnDef<NFT>[] = [
+  const columns: ColumnDef<NFT, Partial<NFT>>[] = [
     {
       id: "rank",
       header: "Rank",
@@ -51,12 +51,10 @@ export const CheapestNFTTable: React.FC = () => {
     },
     {
       id: "collection",
-      accessorFn: (row) => {
-        return [row.imageUrl, row.name, row.creatorAddress, row.tokenId];
-      },
+      accessorFn: (row) => ({ ...row }),
       header: () => <div className="text-start">Collection</div>,
       cell: (row) => {
-        const [imageUrl, name, creatorAddress, tokenId] = row.getValue() as object;
+        const { imageUrl, name, creatorAddress, tokenId } = row.getValue();
         return (
           <Link
             to={`/item/${tokenId}`}
@@ -71,9 +69,10 @@ export const CheapestNFTTable: React.FC = () => {
               <div className="flex items-center gap-1">
                 <div className="text-xs">creator:</div>
                 <div className="text-xs font-medium">
-                  {creatorAddress.slice(0, 4) +
-                    "..." +
-                    creatorAddress.slice(38)}
+                  {creatorAddress &&
+                    creatorAddress.slice(0, 4) +
+                      "..." +
+                      creatorAddress.slice(38)}
                 </div>
               </div>
             </div>

@@ -4,10 +4,10 @@ import { ImgCarousel } from "./ImgCarousel";
 import { NewestNFTTable } from "./NewestNFTTable";
 import { CheapestNFTTable } from "./CheapestNFTTable";
 import { GetNFTRequest } from "@backend/apitypes";
-import { FetchRequest } from "@/types/fetchers";
+import { FetchWithParams } from "@/types/fetchers";
 
 const apiURL = import.meta.env.VITE_API_URL;
-const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
+const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
   const newUrl = new URL(url);
   newUrl.search = new URLSearchParams(params).toString();
   return fetch(newUrl).then((data) => data.json());
