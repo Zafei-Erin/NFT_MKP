@@ -14,12 +14,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import useSWR, { Fetcher } from "swr";
-import { FetchRequest } from ".";
+
 import { GetNFTRequest } from "@backend/apitypes";
 import { Link } from "react-router-dom";
+import { FetchWithParams } from "@/types/fetchers";
 
 const apiURL = import.meta.env.VITE_API_URL;
-const fetcher: Fetcher<NFT[], FetchRequest> = ({ url, params }) => {
+const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
   const newUrl = new URL(url);
   newUrl.search = new URLSearchParams(params).toString();
   return fetch(newUrl).then((data) => data.json());
@@ -55,7 +56,7 @@ export const CheapestNFTTable: React.FC = () => {
       },
       header: () => <div className="text-start">Collection</div>,
       cell: (row) => {
-        const [imageUrl, name, creatorAddress, tokenId] = row.getValue();
+        const [imageUrl, name, creatorAddress, tokenId] = row.getValue() as object;
         return (
           <Link
             to={`/item/${tokenId}`}

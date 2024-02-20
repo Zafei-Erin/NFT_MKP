@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@metamask/providers": "^14.0.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -29,7 +30,7 @@
     "date-fns": "^3.3.1",
     "embla-carousel-autoplay": "^8.0.0-rc19",
     "embla-carousel-react": "^8.0.0-rc19",
-    "ethers": "^5.5.4",
+    "ethers": "^5.7.2",
     "lucide-react": "^0.309.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

@@ -1,6 +1,6 @@
 import { useToast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "@/lib/utils";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 import { XCircle } from "lucide-react";
 import { ReactNode, createContext, useContext, useState } from "react";
 
@@ -24,7 +24,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const connect = async () => {
     if (typeof window.ethereum !== "undefined") {
       const metaMaskProvider = window.ethereum.providers.find(
-        (p) => p.isMetaMask,
+        (p: providers.ExternalProvider) => p.isMetaMask,
       );
       try {
         const account = await metaMaskProvider.request({
