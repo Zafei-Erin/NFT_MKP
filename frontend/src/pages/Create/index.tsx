@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { Label } from "@radix-ui/react-label";
+import { Trash2 } from "lucide-react";
 
 import { UploadIcon } from "@/assets";
-import { Label } from "@radix-ui/react-label";
 import { ProgressModal } from "./ProgressModal";
-import { Trash2 } from "lucide-react";
 
 export type formInputType = {
   img: File | null;

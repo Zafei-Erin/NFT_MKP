@@ -15,9 +15,10 @@ import {
 } from "@tanstack/react-table";
 import useSWR, { Fetcher } from "swr";
 
-import { GetNFTRequest } from "@backend/apitypes";
+
 import { Link } from "react-router-dom";
 import { FetchWithParams } from "@/types/fetchers";
+import { GetNFTRequest } from "@/types/apitypes";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
