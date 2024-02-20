@@ -25,9 +25,10 @@
     "paths": {
       "@/*": ["./src/*"],
       "@backend/*": ["../backend/src/*"],
-      "@smart_contract/*": ["../smart_contract/*"]
+      "@smart_contract/*": ["../smart_contract/*"],
+      // "zod":["./node_modules/zod"]
     }
   },
-  "include": ["src", "decs.d.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

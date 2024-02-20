@@ -3,8 +3,9 @@ import useSWR, { Fetcher } from "swr";
 import { ImgCarousel } from "./ImgCarousel";
 import { NewestNFTTable } from "./NewestNFTTable";
 import { CheapestNFTTable } from "./CheapestNFTTable";
-import { GetNFTRequest } from "@backend/apitypes";
+
 import { FetchWithParams } from "@/types/fetchers";
+import { GetNFTRequest } from "@/types/apitypes";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
