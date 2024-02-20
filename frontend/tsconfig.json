@@ -25,7 +25,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@backend/*": ["../backend/src/*"],
-      "@smart_contract/*": ["../smart_contract/*"]
+      "@smart_contract/*": ["../smart_contract/*"],
+      // "zod":["./node_modules/zod"]
     }
   },
   "include": ["src"],
