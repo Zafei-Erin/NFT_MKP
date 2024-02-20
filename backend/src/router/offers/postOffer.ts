@@ -7,7 +7,6 @@ export const postOffer = async (
   next: NextFunction
 ) => {
   try {
-
     const offer = await prisma.offer.create({
       data: {
         price: req.body.price,
@@ -25,7 +24,7 @@ export const postOffer = async (
         },
         nft: {
           connect: {
-            tokenId: req.body.nftId,
+            tokenId: req.body.nftTokenId,
           },
         },
       },

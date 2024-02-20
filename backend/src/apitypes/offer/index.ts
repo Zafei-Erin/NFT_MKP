@@ -6,7 +6,7 @@ export const Offer = z.object({
   createAt: z.coerce.date(),
   expireAt: z.coerce.date(),
   fromAddress: z.coerce.string(),
-  nftId: z.coerce.number(),
+  nftTokenId: z.coerce.number(),
 });
 export type Offer = z.infer<typeof Offer>;
 

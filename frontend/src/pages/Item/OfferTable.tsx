@@ -105,9 +105,9 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
       cell: ({ row }) => {
         const price = parseFloat(row.getValue("price"));
 
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
+        const formatted = new Intl.NumberFormat(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 8,
         }).format(price);
 
         return <div className="lowercase">{formatted}</div>;
