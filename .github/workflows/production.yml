@@ -17,20 +17,13 @@ jobs:
         uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: "prod: backend"
-
+  
+  deploy-aws:
+    runs-on: aws-nft
+    steps:
       - name: Deploy to EC2 instance
-        uses: peterkimzz/aws-ssm-send-command@master
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: ${{ secrets.INSTANCE_ID }}
-          # Command execution location
-          working-directory: /home/ubuntu
-          command: |
-            sudo docker-compose stop
-            sudo docker-compose rm -f
-            sudo docker-compose pull
-            sudo docker-compose up -d
-            sudo docker image prune -af
-          comment: docker-compose.yml file re-pulls newer versions of images and runs them on the instance.
+        run: sudo docker-compose stop
+        run: sudo docker-compose rm -f
+        run: sudo docker-compose pull
+        run: sudo docker-compose up -d
+        run: sudo docker image prune -af
