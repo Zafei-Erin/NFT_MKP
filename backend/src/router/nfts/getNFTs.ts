@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 
 import { prisma } from "../../prisma";
-import { GetNFTRequest } from "../../apitypes/nft";
+// import { GetNFTRequest } from "../../apitypes/nft";
+import {GetNFTRequest} from "@zafei/nft_mkp_types"
 
 const DEFAULT_PARAMS = {
   take: 10,

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../../prisma";
-import { Offer } from "../../apitypes/offer";
+import { Offer } from "@zafei/nft_mkp_types";
+
 
 export const patchOffer = async (
   req: Request,
