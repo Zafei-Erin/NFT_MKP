@@ -5,7 +5,7 @@ on:
     types: [labeled]
 
 jobs:
-  git:
+  deploy-aws:
     if: "${{ github.event.label.name == 'prod: backend' }}"
     runs-on: ubuntu-latest
 
@@ -17,12 +17,9 @@ jobs:
         uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: "prod: backend"
-  
-  aws:
-    needs: git
-    runs-on: aws-nft
-    steps:
+      
       - name: Deploy to EC2 instance
+        runs-on: aws-nft
         run: sudo docker-compose stop
         run: sudo docker-compose rm -f
         run: sudo docker-compose pull
