@@ -3,10 +3,10 @@ name: Backend-ci
 on:
   push:
     branches: [main]
-    paths: './backend/**'
+    paths: 'backend/**'
   pull_request:
     types: [opened, synchronize, reopened]
-    paths: './backend/**'
+    paths: 'backend/**'
 
 jobs: 
   git-ci:
