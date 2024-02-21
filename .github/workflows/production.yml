@@ -18,10 +18,10 @@ jobs:
         with:
           labels: "prod: backend"
       
-      - name: Deploy to EC2 instance
-        runs-on: aws-nft
-        run: sudo docker-compose stop
-        run: sudo docker-compose rm -f
-        run: sudo docker-compose pull
-        run: sudo docker-compose up -d
-        run: sudo docker image prune -af
+      # - name: Deploy to EC2 instance
+      #   runs-on: aws-nft
+      #   run: sudo docker-compose stop
+      #   run: sudo docker-compose rm -f
+      #   run: sudo docker-compose pull
+      #   run: sudo docker-compose up -d
+      #   run: sudo docker image prune -af
