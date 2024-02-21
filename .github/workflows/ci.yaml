@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      matrix: { dir: ["./backend", "./frontend", "smart_contract"] }
+      matrix: { dir: ["backend", "frontend", "smart_contract"] }
 
     steps:
       - name: Checkout repo
