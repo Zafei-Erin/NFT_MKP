@@ -2,13 +2,13 @@ name: Backend-ci
 
 on:
   push:
+    paths: [backend/**]
     branches: [main]
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize, reopened]
 
 jobs: 
   git-ci:
-    if: "${{ github.event.label.name == 'deploy: backend' }}"
     runs-on: ubuntu-latest 
 
     steps:

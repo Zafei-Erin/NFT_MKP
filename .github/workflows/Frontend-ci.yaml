@@ -2,19 +2,19 @@ name: Frontend-ci
 
 on:
   push:
+    paths: [frontend/**]
     branches: [main]
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize, reopened]
 
 jobs:
   git-ci:
-    if: "${{ github.event.label.name == 'deploy: frontend' }}"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
+      
       - name: Remove deploy label
         uses: actions-ecosystem/action-remove-labels@v1
         with:
