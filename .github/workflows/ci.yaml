@@ -27,6 +27,6 @@ jobs:
         run: npm install
         working-directory: ${{ matrix.dir }}
 
-      - name: Run build
-        run: npm run lint && npm run build
+      - name: Run ci
+        run: npm ci
         working-directory: ${{ matrix.dir }}
