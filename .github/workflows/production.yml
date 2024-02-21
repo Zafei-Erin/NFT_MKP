@@ -1,11 +1,11 @@
-name: Production
+name: Backend-cd
 
 on:
   pull_request:
     types: [labeled]
 
 jobs:
-  deploy-backend:
+  git:
     if: "${{ github.event.label.name == 'prod: backend' }}"
     runs-on: ubuntu-latest
 
@@ -18,7 +18,8 @@ jobs:
         with:
           labels: "prod: backend"
   
-  deploy-aws:
+  aws:
+    needs: git
     runs-on: aws-nft
     steps:
       - name: Deploy to EC2 instance
