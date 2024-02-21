@@ -1,16 +1,16 @@
-name: Backend-ci 
+name: Backend-ci
 
 on:
   push:
     branches: [main]
-    paths: 'backend/**'
+    paths: "backend/**"
   pull_request:
     types: [opened, synchronize, reopened]
-    paths: 'backend/**'
+    paths: "backend/**"
 
-jobs: 
+jobs:
   git-ci:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -20,7 +20,7 @@ jobs:
         uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: "deploy: backend"
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -35,10 +35,10 @@ jobs:
       - name: Run ci
         run: npm ci
         working-directory: "backend"
-  
+
   docker-push:
     needs: git-ci
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
       - name: Login to Docker Hub
@@ -56,6 +56,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: /backend
+          outputs: pwd
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nft-mkp-api:latest
