@@ -1,11 +1,11 @@
 import { NFT } from "@/types/types";
 import useSWR, { Fetcher } from "swr";
+import { GetNFTRequest } from "@zafei/nft_mkp_types";
+
 import { ImgCarousel } from "./ImgCarousel";
 import { NewestNFTTable } from "./NewestNFTTable";
 import { CheapestNFTTable } from "./CheapestNFTTable";
-
 import { FetchWithParams } from "@/types/fetchers";
-import { GetNFTRequest } from "@/types/apitypes";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {

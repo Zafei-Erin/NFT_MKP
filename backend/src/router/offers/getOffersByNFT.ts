@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import { GetOffersRequest } from "@zafei/nft_mkp_types";
 import { prisma } from "../../prisma";
-import { GetOffersRequest } from "../../apitypes/offer";
+
 
 const DEFAULT_PARAMS = {
   skip: 0,
