@@ -19,7 +19,7 @@ jobs:
           labels: "prod: backend"
 
   deploy-aws:
-    needs: build
+    needs: deploy-git
     runs-on: aws-nft
 
     steps:

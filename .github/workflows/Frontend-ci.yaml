@@ -1,0 +1,36 @@
+name: Frontend-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [labeled]
+
+jobs:
+  test:
+    if: "${{ github.event.label.name == 'deploy: frontend' }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Remove deploy label
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: "deploy: frontend"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install deps
+        run: npm install
+        working-directory: "frontend"
+
+      - name: Run ci
+        run: npm ci
+        working-directory: "frontend"

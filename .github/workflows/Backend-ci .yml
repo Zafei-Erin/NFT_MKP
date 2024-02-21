@@ -1,11 +1,13 @@
-name: Staging
+name: Backend-ci 
 
 on:
+  push:
+    branches: [main]
   pull_request:
     types: [labeled]
 
 jobs: 
-  deploy-backend:
+  push-docker:
     if: "${{ github.event.label.name == 'deploy: backend' }}"
     runs-on: ubuntu-latest 
 
@@ -17,6 +19,21 @@ jobs:
       uses: actions-ecosystem/action-remove-labels@v1
       with:
         labels: "deploy: backend"
+    
+    - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: "backend/package-lock.json"
+
+    - name: Install deps
+      run: npm install
+      working-directory: "backend"
+
+    - name: Run ci
+      run: npm ci
+      working-directory: "backend"
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
