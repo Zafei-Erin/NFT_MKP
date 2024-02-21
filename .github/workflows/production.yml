@@ -19,12 +19,12 @@ jobs:
           labels: "prod: backend"
 
       - name: Deploy to EC2 instance
-        uses: peterkimzz/aws-ssm-send-command@v1.1.1
+        uses: peterkimzz/aws-ssm-send-command@master
         with:
+          aws-region: ${{ secrets.AWS_REGION }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          instance-ids: ${{ secrets.AWS_INSTANCE_ID }}
+          instance-ids: ${{ secrets.INSTANCE_ID }}
           # Command execution location
           working-directory: /home/ubuntu
           command: |
@@ -33,3 +33,4 @@ jobs:
             sudo docker-compose pull
             sudo docker-compose up -d
             sudo docker image prune -af
+          comment: docker-compose.yml file re-pulls newer versions of images and runs them on the instance.
