@@ -1,3 +1,9 @@
+import { useMemo, useState } from "react";
+import { GetOffersRequest } from "@zafei/nft_mkp_types";
+import useSWR, { Fetcher } from "swr";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { EditIcon, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -7,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import {
   SortingState,
   createColumnHelper,
@@ -16,17 +21,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-
 import { EthPriceType, Offer } from "@/types/types";
-import useSWR, { Fetcher } from "swr";
 import { FetchWithParams } from "@/types/fetchers";
 import { RemoveOfferModal } from "@/components/RemoveOfferModal";
-import { EditIcon, Trash2 } from "lucide-react";
 import { EditOfferModal } from "@/components/EditOfferModal";
 import { useWallet } from "@/context/walletProvider";
 import { cn } from "@/lib/utils";
-import { GetOffersRequest } from "@/types/apitypes";
 
 type OfferTableProps = {
   nftId: number;

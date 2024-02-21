@@ -5,7 +5,7 @@ import { NewestNFTTable } from "./NewestNFTTable";
 import { CheapestNFTTable } from "./CheapestNFTTable";
 
 import { FetchWithParams } from "@/types/fetchers";
-import { GetNFTRequest } from "@/types/apitypes";
+import { GetNFTRequest } from "@zafei/nft_mkp_types";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
