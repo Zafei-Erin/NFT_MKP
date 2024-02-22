@@ -1,32 +1,37 @@
-name: CI
+name: Frontend-ci
 
 on:
   push:
     branches: [main]
+    paths: 'frontend/**'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths: 'frontend/**'
 
 jobs:
-  test:
+  git-ci:
     runs-on: ubuntu-latest
-    strategy:
-      matrix: { dir: ["backend", "frontend", "smart_contract"] }
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      
+      - name: Remove deploy label
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: "deploy: frontend"
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
+          cache-dependency-path: "frontend/package-lock.json"
 
       - name: Install deps
         run: npm install
-        working-directory: ${{ matrix.dir }}
+        working-directory: "frontend"
 
       - name: Run ci
         run: npm ci
-        working-directory: ${{ matrix.dir }}
+        working-directory: "frontend"
