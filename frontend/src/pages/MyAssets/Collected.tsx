@@ -22,7 +22,18 @@ export const Collected = () => {
   );
 
   if (!nfts || !nfts.length) {
-    return <>no data</>;
+    return (
+      <div className="flex h-[calc(100vh-14rem)] flex-col items-center justify-center gap-12">
+        <p className="text-2xl font-bold text-sky-600">
+          You haven't collected any NFT yet.
+        </p>
+        <Link to="/">
+          <button className="rounded-lg bg-sky-600 px-2 py-1 text-lg text-white transition-all hover:bg-sky-700">
+            Back to home page
+          </button>
+        </Link>
+      </div>
+    );
   }
 
   return (
