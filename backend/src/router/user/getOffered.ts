@@ -18,6 +18,10 @@ export const getOffered = async (
           nft: true,
         },
       });
+
+    if (offers === null) {
+      res.status(200).json([]);
+    }
     res.status(200).json(offers);
   } catch (error) {
     next(error);
