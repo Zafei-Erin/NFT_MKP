@@ -31,6 +31,7 @@ const apiURL = import.meta.env.VITE_API_URL;
 const ES_API_KEY = import.meta.env.VITE_ETHERSCAN_API_KEY;
 const offerFetcher: Fetcher<Offer[], string> = (url: string) =>
   fetch(url).then((data) => data.json());
+
 const ethPricefetcher: Fetcher<EthPriceType, string> = (url: string) =>
   fetch(url)
     .then((data) => data.json())
@@ -236,7 +237,7 @@ export const Offered: React.FC = () => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                You haven't placed any offer yet.
               </TableCell>
             </TableRow>
           )}
