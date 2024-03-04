@@ -71,6 +71,8 @@ export const useSwitchAndConnect = () => {
         return;
       }
     }
+
+    connectWallet();
   };
 
   return { switchAndConnect };

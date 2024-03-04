@@ -35,10 +35,12 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
   const [isTestnet, setIsTestnet] = useState<boolean>();
 
   useEffect(() => {
-    async () => {
+    const init = async () => {
       const resp = await getNetwork();
       setIsTestnet(resp.success);
     };
+
+    init();
   });
 
   return (
@@ -61,7 +63,7 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {/* <AlertDialogAction onClick={switchAndConnect}> */}
+
           <AlertDialogAction onClick={switchAndConnect}>
             {isTestnet ? "Connect" : "Switch"}
           </AlertDialogAction>
