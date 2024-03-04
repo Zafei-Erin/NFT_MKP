@@ -13,7 +13,12 @@ export const getCreated = async (
           address: req.params.address,
         },
       })
-      .createdNFTs();
+      .createdNFTs({
+        include: {
+          sales: true,
+        },
+      });
+      
     res.status(200).json(nfts);
   } catch (error) {
     next(error);

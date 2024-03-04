@@ -1,3 +1,9 @@
+import { ethers } from "ethers";
+import { decodeError } from "ethers-decode-error";
+import { XCircle } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+
+import { Spinner } from "@/assets";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -5,15 +11,14 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useWallet } from "@/context/walletProvider";
-import { ethers } from "ethers";
-import { ReactNode, useState } from "react";
-
-import { Spinner } from "@/assets";
 import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
+import { useWallet } from "@/context/walletProvider";
+import { useToast } from "./ui/use-toast";
 
 type ListModalProps = {
   tokenId: number;
@@ -25,14 +30,28 @@ const api = import.meta.env.VITE_API_URL;
 const nftaddress = import.meta.env.VITE_NFT_ADDRESS;
 
 export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
-  const { accountAddr, provider, connect } = useWallet();
-  const [price, setPrice] = useState("");
+  const { accountAddr, provider } = useWallet();
+  const { getNetwork } = useNetwork();
+  const { toast } = useToast();
+  const [price, setPrice] = useState<number>(0);
   const [listing, setListing] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
+  useEffect(() => {
+    check();
+    async function check() {
+      const isTestnet = await getNetwork();
+      if (!isTestnet.success || !accountAddr || price <= 0 || !price) {
+        setDisabled(true);
+        return;
+      }
+      setDisabled(false);
+    }
+  });
 
   // list create in market
   const listItem = async () => {
-    if (!accountAddr || !provider) {
-      connect();
+    if (!provider) {
       return;
     }
     try {
@@ -44,7 +63,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
         signer,
       );
       const listingPrice = await contract.getListingPrice();
-      const priceEth = ethers.utils.parseUnits(price, "ether");
+      const priceEth = ethers.utils.parseUnits(price.toString(), "ether");
       const transaction = await contract.createMarketListing(
         nftaddress,
         tokenId,
@@ -56,8 +75,19 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
       await transaction.wait();
       updateDB();
       setListing(false);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      const { error } = decodeError(e);
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <XCircle className="h-5 w-5 text-red-600" />
+            Failed to connect wallet
+          </div>
+        ),
+        description: <>{error}</>,
+      });
+    } finally {
+      setListing(false);
     }
   };
 
@@ -75,6 +105,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogOverlay className="bg-black/10" />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Listing NFT</DialogTitle>
@@ -93,7 +124,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
                 id="price"
                 required
                 type="number"
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(e.target.valueAsNumber)}
                 placeholder="0.00 "
                 className="text-md h-fit appearance-none text-zinc-500 placeholder:text-zinc-500 focus:outline-none"
               />
@@ -111,7 +142,9 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
               <div>Listing...</div>
             </Button>
           ) : (
-            <Button onClick={listItem}>Continue</Button>
+            <Button onClick={listItem} disabled={disabled}>
+              Continue
+            </Button>
           )}
         </DialogFooter>
       </DialogContent>

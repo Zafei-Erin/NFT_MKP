@@ -1,3 +1,8 @@
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { addDays, format } from "date-fns";
+import { CheckCircle2, XCircle } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -5,8 +10,9 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,11 +31,7 @@ import {
 import { useWallet } from "@/context/walletProvider";
 import { cn } from "@/lib/utils";
 import { Offer } from "@/types/types";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { addDays, format } from "date-fns";
-import { ReactNode, useEffect, useState } from "react";
 import { useToast } from "./ui/use-toast";
-import { CheckCircle2 } from "lucide-react";
 
 type EditOfferModalProps = {
   offer: Offer;
@@ -78,25 +80,37 @@ export const EditOfferModal: React.FC<EditOfferModalProps> = ({
 
   const action = async () => {
     if (!price || price < MIN_PRICE || !accountAddr || !date) {
-      console.log("continue: ", price, accountAddr, date);
       return;
     }
 
-    await placeOffer();
-    toast({
-      title: (
-        <div className="flex items-center justify-start gap-1">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          Edit Offer Success!
-        </div>
-      ),
-      description: "Your NFT is created!",
-    });
-    window.location.reload();
+    try {
+      await placeOffer();
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            Edit Offer Success!
+          </div>
+        ),
+        description: "Your edit is successful!",
+      });
+      window.location.reload();
+    } catch (error) {
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <XCircle className="h-5 w-5 text-red-600" />
+            Failed to edit offer
+          </div>
+        ),
+        description: "Something went wrong.",
+      });
+    }
   };
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogOverlay className="bg-black/10" />
       <AlertDialogContent className="overflow-auto" onEscapeKeyDown={reset}>
         <AlertDialogHeader>
           <AlertDialogTitle>Edit offer</AlertDialogTitle>

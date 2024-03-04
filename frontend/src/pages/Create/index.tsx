@@ -1,9 +1,13 @@
-import { useState } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
 import { UploadIcon } from "@/assets";
-import { ProgressModal } from "./ProgressModal";
+import { ConnectWalletModal } from "@/components/connectWallet/ConnectWalletModal";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
+import { useWallet } from "@/context/walletProvider";
+import { CreateModal } from "./CreateModal";
+import { MissingInputModal } from "./MissingInputModal";
 
 export type formInputType = {
   img: File | null;
@@ -12,12 +16,42 @@ export type formInputType = {
 };
 
 export const Create = () => {
-  const [imgPreviewUrl, setImgPreviewUrl] = useState("");
+  const { accountAddr } = useWallet();
+  const { getNetwork } = useNetwork();
+  const [imgPreviewUrl, setImgPreviewUrl] = useState<string>("");
+  const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] =
+    useState<boolean>(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [isMissingInputModalOpen, setIsMissingInputModalOpen] =
+    useState<boolean>(false);
   const [formInput, updateFormInput] = useState<formInputType>({
     img: null,
     name: "",
     description: "",
   });
+
+  const openConnectWalletModal = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    // if input is incomplete
+    const { name, img } = formInput;
+    if (!name || !img) {
+      e.preventDefault();
+      setIsMissingInputModalOpen(true);
+      return;
+    }
+
+    const res = await getNetwork();
+    // if is in test net and is connected
+    if (accountAddr && res.success) {
+      e.preventDefault();
+      setIsCreateModalOpen(true);
+      return;
+    }
+
+    // if all set
+    setIsConnectWalletModalOpen(true);
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -119,7 +153,27 @@ export const Create = () => {
               }
             />
           </div>
-          <ProgressModal formInput={formInput} />
+          <button
+            onClick={openConnectWalletModal}
+            className="mt-4 rounded-lg bg-sky-600 p-4 font-bold text-white shadow-lg"
+          >
+            Create Digital Asset
+          </button>
+          <MissingInputModal
+            open={isMissingInputModalOpen}
+            onOpenChange={setIsMissingInputModalOpen}
+          />
+
+          <CreateModal
+            formInput={formInput}
+            open={isCreateModalOpen}
+            onOpenChange={setIsCreateModalOpen}
+          />
+
+          <ConnectWalletModal
+            open={isConnectWalletModalOpen}
+            onOpenChange={setIsConnectWalletModalOpen}
+          />
         </div>
       </div>
     </div>

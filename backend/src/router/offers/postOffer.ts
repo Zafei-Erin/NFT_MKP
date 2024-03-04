@@ -24,7 +24,7 @@ export const postOffer = async (
         },
         nft: {
           connect: {
-            tokenId: req.body.nftTokenId,
+            tokenId: req.body.tokenId,
           },
         },
       },

@@ -19,7 +19,6 @@ export const MyAssets = () => {
   };
 
   useEffect(() => {
-    console.log(tab);
     if (tab === "") {
       setSearchParams({ tab: DEFAULT_TAB });
     }

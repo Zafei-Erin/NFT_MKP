@@ -12,6 +12,7 @@ import { Item } from "./pages/Item";
 import { MyAssets } from "./pages/MyAssets";
 import { Toaster } from "./components/ui/toaster";
 import { TestButton } from "./pages/test";
+import { NetworkProvider } from "./context/networkProvider/networkProvider";
 
 function App() {
   const RRLocation = useLocation();
@@ -19,20 +20,22 @@ function App() {
   return (
     <div className="">
       <WalletProvider>
-        {pathname !== "/" && <Header />}
+        <NetworkProvider>
+          {pathname !== "/" && <Header />}
 
-        <ErrorBoundary fallback={<ErrorPage />} onReset={location.reload}>
-          <Suspense fallback={<LoadingPage />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/create" element={<Create />} />
-              <Route path="/item/:tokenId" element={<Item />} />
-              <Route path="/myAssets" element={<MyAssets />} />
-              <Route path="/test" element={<TestButton />} />
-            </Routes>
-          </Suspense>
-          <Toaster />
-        </ErrorBoundary>
+          <ErrorBoundary fallback={<ErrorPage />} onReset={location.reload}>
+            <Suspense fallback={<LoadingPage />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/create" element={<Create />} />
+                <Route path="/item/:tokenId" element={<Item />} />
+                <Route path="/myAssets" element={<MyAssets />} />
+                <Route path="/test" element={<TestButton />} />
+              </Routes>
+            </Suspense>
+            <Toaster />
+          </ErrorBoundary>
+        </NetworkProvider>
       </WalletProvider>
     </div>
   );

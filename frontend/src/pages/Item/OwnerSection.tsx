@@ -1,13 +1,32 @@
 import { ListModal } from "@/components/ListModal";
 import { UpdateListingModal } from "@/components/UpdateListingModal";
+import { ConnectWalletModal } from "@/components/connectWallet/ConnectWalletModal";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
+import { useWallet } from "@/context/walletProvider";
 import { NFT } from "@/types/types";
+import { useState } from "react";
 
 type OwnerSectionProps = {
   item: NFT;
 };
 
 export const OwnerSection: React.FC<OwnerSectionProps> = ({ item }) => {
-  console.log("own");
+  const { accountAddr } = useWallet();
+  const { getNetwork } = useNetwork();
+  const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] =
+    useState(false);
+
+  const openConnectWalletModal = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    const res = await getNetwork();
+    if (accountAddr && res.success) {
+      return;
+    }
+
+    e.stopPropagation();
+    setIsConnectWalletModalOpen(true);
+  };
 
   return (
     <div>
@@ -18,7 +37,10 @@ export const OwnerSection: React.FC<OwnerSectionProps> = ({ item }) => {
             {item.price} ETH
           </div>
           <UpdateListingModal tokenId={item.tokenId}>
-            <button className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100">
+            <button
+              onClick={openConnectWalletModal}
+              className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100"
+            >
               Edit Listing
             </button>
           </UpdateListingModal>
@@ -30,12 +52,19 @@ export const OwnerSection: React.FC<OwnerSectionProps> = ({ item }) => {
             This item is not listing
           </div>
           <ListModal tokenId={item.tokenId}>
-            <button className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100">
+            <button
+              onClick={openConnectWalletModal}
+              className="w-full rounded-lg bg-sky-600 py-2 text-lg font-semibold text-gray-100"
+            >
               List Now
             </button>
           </ListModal>
         </div>
       )}
+      <ConnectWalletModal
+        open={isConnectWalletModalOpen}
+        onOpenChange={setIsConnectWalletModalOpen}
+      />
     </div>
   );
 };
