@@ -10,7 +10,6 @@ on:
 
 jobs:
   deploy-git:
-    if: "${{ github.event.label.name == 'prod: backend' }}"
     runs-on: ubuntu-latest
 
     steps:
