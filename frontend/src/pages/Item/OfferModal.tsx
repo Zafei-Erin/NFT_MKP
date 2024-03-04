@@ -1,3 +1,8 @@
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { addDays, format } from "date-fns";
+import { CheckCircle2, XCircle } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -5,6 +10,7 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
@@ -23,12 +29,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
 import { useWallet } from "@/context/walletProvider";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { addDays, format } from "date-fns";
-import { CheckCircle2 } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
 
 type OfferModalProps = {
   tokenId: number;
@@ -45,42 +48,71 @@ export const OfferModal: React.FC<OfferModalProps> = ({
   const [date, setDate] = useState<Date>();
   const [price, setPrice] = useState(0);
   const { accountAddr } = useWallet();
+  const { getNetwork } = useNetwork();
   const { toast } = useToast();
+  const [disabled, setDisabled] = useState<boolean>();
+
+  useEffect(() => {
+    check();
+
+    async function check() {
+      const isTestnet = await getNetwork();
+      if (!isTestnet.success || !accountAddr || price <= 0 || !price || !date) {
+        setDisabled(true);
+        return;
+      }
+      setDisabled(false);
+    }
+  }, [getNetwork, accountAddr, price, date]);
 
   useEffect(() => {
     setDate(addDays(new Date(), DEFAULT_EXPIRE_AT));
   }, []);
 
   const placeOffer = async () => {
-    if (price <= 0 || !accountAddr || !date) {
-      console.log("continue: ", price, accountAddr, date);
+    if (!accountAddr || price <= 0 || !price || !date) {
+      reset();
       return;
     }
 
-    const offer = {
-      price: price,
-      createAt: new Date(),
-      expireAt: date,
-      fromAddress: accountAddr.toLowerCase(),
-      nftId: tokenId,
-    };
+    try {
+      const offer = {
+        price: price,
+        createAt: new Date(),
+        expireAt: date,
+        fromAddress: accountAddr.toLowerCase(),
+        tokenId: tokenId,
+      };
 
-    const response = await fetch(`${apiURL}/offers`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(offer),
-    });
-    await response.json();
-    toast({
-      title: (
-        <div className="flex items-center justify-start gap-1">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          Place Offer Successfully!
-        </div>
-      ),
-      description: "Your offer is created!",
-    });
-    window.location.reload();
+      const response = await fetch(`${apiURL}/offers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(offer),
+      });
+      await response.json();
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            Place Offer Successfully!
+          </div>
+        ),
+        description: "Your offer is created!",
+      });
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <XCircle className="h-5 w-5 text-red-600" />
+            Failed to place order
+          </div>
+        ),
+        description: <>Something went wrong</>,
+      });
+    }
   };
 
   const reset = () => {
@@ -90,6 +122,7 @@ export const OfferModal: React.FC<OfferModalProps> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogOverlay className="bg-black/10" />
       <AlertDialogContent className=" overflow-auto" onEscapeKeyDown={reset}>
         <AlertDialogHeader>
           <AlertDialogTitle>Make an offer</AlertDialogTitle>
@@ -117,7 +150,9 @@ export const OfferModal: React.FC<OfferModalProps> = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={reset}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={placeOffer}>Continue</AlertDialogAction>
+          <AlertDialogAction disabled={disabled} onClick={placeOffer}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

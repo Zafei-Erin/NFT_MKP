@@ -1,7 +1,11 @@
-import { useWallet } from "@/context/walletProvider";
-import { NFT } from "@/types/types";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import useSWR, { Fetcher } from "swr";
+
+import { ConnectWalletModal } from "@/components/connectWallet/ConnectWalletModal";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
+import { useWallet } from "@/context/walletProvider";
+import { NFT } from "@/types/types";
 import { ListModal } from "../../components/ListModal";
 import { UpdateListingModal } from "../../components/UpdateListingModal";
 
@@ -12,6 +16,8 @@ const fetcher: Fetcher<NFT[], string> = (url: string) =>
 
 export const Collected = () => {
   const { accountAddr } = useWallet();
+  const { getNetwork } = useNetwork();
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState<boolean>(false);
 
   const { data: nfts } = useSWR(
     `${apiURL}/user/${accountAddr}/collected`,
@@ -21,6 +27,14 @@ export const Collected = () => {
     },
   );
 
+  const open = async () => {
+    const isTestnet = await getNetwork();
+    if (!accountAddr || !isTestnet.success) {
+      setIsConnectModalOpen(true);
+      return;
+    }
+  };
+
   if (!nfts || !nfts.length) {
     return (
       <div className="flex h-[calc(100vh-14rem)] flex-col items-center justify-center gap-12">
@@ -29,7 +43,7 @@ export const Collected = () => {
         </p>
         <Link to="/">
           <button className="rounded-lg bg-sky-600 px-2 py-1 text-lg text-white transition-all hover:bg-sky-700">
-            Back to home page
+            Home
           </button>
         </Link>
       </div>
@@ -49,8 +63,8 @@ export const Collected = () => {
                 <img src={nft.imageUrl} className="h-2/3 w-full object-cover" />
                 <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4">
                   <div className="mb-3 text-sm font-semibold">{nft.name}</div>
-                  <div className="mb-2 text-sm font-semibold">
-                    {nft.listed ? nft.price : "not listed"}
+                  <div className="mb-2 text-sm font-normal">
+                    {nft.listed ? `price: ${nft.price}` : "not listed"}
                   </div>
                   <div className="text-xs text-gray-700">
                     {nft.sales &&
@@ -62,17 +76,27 @@ export const Collected = () => {
             </Link>
             {nft.listed ? (
               <UpdateListingModal tokenId={nft.tokenId}>
-                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all group-hover:h-[2.8rem] group-hover:text-gray-100 ">
+                <button
+                  onClick={open}
+                  className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all group-hover:h-[2.8rem] group-hover:text-gray-100 "
+                >
                   Edit Lising
                 </button>
               </UpdateListingModal>
             ) : (
               <ListModal tokenId={nft.tokenId}>
-                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all disabled:cursor-not-allowed disabled:bg-gray-600 group-hover:h-[2.8rem] group-hover:text-gray-100">
+                <button
+                  onClick={open}
+                  className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all disabled:cursor-not-allowed disabled:bg-gray-600 group-hover:h-[2.8rem] group-hover:text-gray-100"
+                >
                   List now
                 </button>
               </ListModal>
             )}
+            <ConnectWalletModal
+              open={isConnectModalOpen}
+              onOpenChange={setIsConnectModalOpen}
+            />
           </div>
         );
       })}

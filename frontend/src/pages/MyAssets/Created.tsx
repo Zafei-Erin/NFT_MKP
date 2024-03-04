@@ -5,6 +5,9 @@ import useSWR, { Fetcher } from "swr";
 import { ListModal } from "../../components/ListModal";
 import { UpdateListingModal } from "../../components/UpdateListingModal";
 import { zeroAddr } from "@/constant";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
+import { useState } from "react";
+import { ConnectWalletModal } from "@/components/connectWallet/ConnectWalletModal";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -13,6 +16,8 @@ const fetcher: Fetcher<NFT[], string> = (url: string) =>
 
 export const Created = () => {
   const { accountAddr } = useWallet();
+  const { getNetwork } = useNetwork();
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState<boolean>(false);
 
   const { data: nfts } = useSWR(
     `${apiURL}/user/${accountAddr}/created`,
@@ -21,6 +26,14 @@ export const Created = () => {
       suspense: true,
     },
   );
+
+  const open = async () => {
+    const isTestnet = await getNetwork();
+    if (!accountAddr || !isTestnet.success) {
+      setIsConnectModalOpen(true);
+      return;
+    }
+  };
 
   if (!nfts || !nfts.length) {
     return (
@@ -48,13 +61,14 @@ export const Created = () => {
             <Link to={`/item/${nft.tokenId}`}>
               <div className="h-full">
                 <img src={nft.imageUrl} className="h-2/3 w-full object-cover" />
-                <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4">
-                  <div className="mb-3 text-sm font-semibold">{nft.name}</div>
-                  <div className="mb-2 text-sm font-semibold">
-                    {nft.listed ? "price: " + nft.price : "not listed"}
+                <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4  text-sm">
+                  <div className="mb-3 font-semibold">{nft.name}</div>
+                  <div className="mb-2 font-semibold">
+                    {nft.listed ? `${nft.price} ETH` : "not listed"}
                   </div>
-                  <div className="text-xs text-gray-700">
+                  <div className=" text-gray-700">
                     {nft.sales &&
+                      nft.sales.length > 0 &&
                       `Last
                     sale: ${nft.sales[nft.sales.length - 1].price} ETH`}
                   </div>
@@ -71,18 +85,27 @@ export const Created = () => {
               </button>
             ) : nft.listed ? (
               <UpdateListingModal tokenId={nft.tokenId}>
-                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all group-hover:h-[2.8rem] group-hover:text-gray-100 ">
+                <button
+                  onClick={open}
+                  className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all group-hover:h-[2.8rem] group-hover:text-gray-100 "
+                >
                   Edit Lising
                 </button>
               </UpdateListingModal>
             ) : (
               <ListModal tokenId={nft.tokenId}>
-                <button className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all disabled:cursor-not-allowed disabled:bg-gray-600 group-hover:h-[2.8rem] group-hover:text-gray-100">
+                <button
+                  onClick={open}
+                  className="absolute bottom-0 flex h-0 w-full items-center justify-center bg-blue-500 font-semibold text-transparent transition-all disabled:cursor-not-allowed disabled:bg-gray-600 group-hover:h-[2.8rem] group-hover:text-gray-100"
+                >
                   List now
                 </button>
               </ListModal>
             )}
-            {}
+            <ConnectWalletModal
+              open={isConnectModalOpen}
+              onOpenChange={setIsConnectModalOpen}
+            />
           </div>
         );
       })}

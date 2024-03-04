@@ -1,3 +1,6 @@
+import { CheckCircle2 } from "lucide-react";
+import { ReactNode, useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -5,14 +8,12 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { ReactNode, useState } from "react";
-
-import { useWallet } from "@/context/walletProvider";
 import { useToast } from "@/components/ui/use-toast";
-import { CheckCircle2 } from "lucide-react";
+import { useWallet } from "@/context/walletProvider";
 
 type EditDescriptionModalProps = {
   tokenId: number;
@@ -51,11 +52,11 @@ export const EditDescriptionModal: React.FC<EditDescriptionModalProps> = ({
       ),
     });
   };
-  console.log(111);
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogOverlay className="bg-black/10" />
       <AlertDialogContent className=" overflow-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>Edit NFT description</AlertDialogTitle>

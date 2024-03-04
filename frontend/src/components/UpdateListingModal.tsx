@@ -1,3 +1,7 @@
+import { ethers } from "ethers";
+import { ReactNode, useEffect, useState } from "react";
+import useSWR, { Fetcher } from "swr";
+
 import { Spinner } from "@/assets";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,14 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import { useWallet } from "@/context/walletProvider";
 import { NFT } from "@/types/types";
-import { ethers } from "ethers";
-import { ReactNode, useState } from "react";
-import useSWR, { Fetcher } from "swr";
-
 import NFTMarketPlace from "@/constant/NFTMarketPlace.json";
+import { useNetwork } from "@/context/networkProvider/networkProvider";
 
 type ListModalProps = {
   tokenId: number;
@@ -36,10 +38,31 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
   children,
 }) => {
   const { accountAddr, provider, connect } = useWallet();
-  const [price, setPrice] = useState("");
+  const { getNetwork } = useNetwork();
+  const [price, setPrice] = useState<number>(0);
   const [staus, setStatus] = useState<status>("Init");
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [params, setParams] = useState<Partial<Params>>();
+  const [continueDisabled, setContinueDisabled] = useState(false);
+  const [cancelDisabled, setCancelDisabled] = useState(false);
+
+  useEffect(() => {
+    check();
+    async function check() {
+      const isTestnet = await getNetwork();
+      if (!isTestnet.success || !accountAddr || price <= 0 || !price) {
+        setContinueDisabled(true);
+      } else {
+        setContinueDisabled(false);
+      }
+
+      if (!isTestnet.success || !accountAddr) {
+        setCancelDisabled(true);
+      } else {
+        setCancelDisabled(false);
+      }
+    }
+  });
 
   const cancelListing = async () => {
     setStatus("Canceling");
@@ -69,7 +92,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
   // list create in market
   const changePrice = async () => {
     setStatus("Changing");
-    setParams({ userAddr: accountAddr, price: parseFloat(price) });
+    setParams({ userAddr: accountAddr, price: price });
     if (!provider) {
       connect();
       return;
@@ -83,7 +106,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
         signer,
       );
 
-      const priceEth = ethers.utils.parseUnits(price, "ether");
+      const priceEth = ethers.utils.parseUnits(price.toString(), "ether");
       const transaction = await contract.changePrice(tokenId, priceEth);
       await transaction.wait();
       setShouldUpdate(true);
@@ -113,6 +136,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogOverlay className="bg-black/10" />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit listing</DialogTitle>
@@ -131,7 +155,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
                 id="price"
                 required
                 type="number"
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(e.target.valueAsNumber)}
                 placeholder="0.00 "
                 className="text-md h-fit appearance-none text-zinc-500 placeholder:text-zinc-500 focus:outline-none"
               />
@@ -143,7 +167,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
           <Button
             onClick={cancelListing}
             variant={"destructive"}
-            disabled={staus === "Canceling"}
+            disabled={staus === "Canceling" || cancelDisabled}
             className="disabled:cursor-not-allowed"
           >
             {staus === "Canceling" && <Spinner className="mr-1 h-6 w-6" />}
@@ -152,7 +176,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
 
           <Button
             onClick={changePrice}
-            disabled={staus === "Changing"}
+            disabled={staus === "Changing" || continueDisabled}
             className="disabled:cursor-not-allowed"
           >
             {staus === "Changing" && <Spinner className="mr-1 h-6 w-6" />}

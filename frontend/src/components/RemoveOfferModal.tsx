@@ -1,3 +1,6 @@
+import { CheckCircle2, XCircle } from "lucide-react";
+import { ReactNode } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -5,13 +8,12 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { useWallet } from "@/context/walletProvider";
 import { Offer } from "@/types/types";
-import { CheckCircle2 } from "lucide-react";
-import { ReactNode } from "react";
 import { useToast } from "./ui/use-toast";
 
 type EditOfferModalProps = {
@@ -29,12 +31,7 @@ export const RemoveOfferModal: React.FC<EditOfferModalProps> = ({
   const { toast } = useToast();
 
   const removeOffer = async () => {
-    if (!accountAddr) {
-      console.log("continue: ", accountAddr);
-      return;
-    }
-
-    const response = await fetch(`${apiURL}/offer/${offer.id}`, {
+    const response = await fetch(`${apiURL}/offers/${offer.id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -42,22 +39,39 @@ export const RemoveOfferModal: React.FC<EditOfferModalProps> = ({
     await response.json();
   };
 
-  const action = () => {
-    removeOffer();
-    toast({
-      title: (
-        <div className="flex items-center justify-start gap-1">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          Edit Offer Successfully!
-        </div>
-      ),
-      description: "Your NFT is created!",
-    });
-    window.location.reload();
+  const action = async () => {
+    if (!accountAddr) {
+      return;
+    }
+    try {
+      await removeOffer();
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            Remove Offer Successfully!
+          </div>
+        ),
+        description: "This offer is removed!",
+      });
+      window.location.reload();
+    } catch (error) {
+      toast({
+        title: (
+          <div className="flex items-center justify-start gap-1">
+            <XCircle className="h-5 w-5 text-red-600" />
+            Failed to remove offer
+          </div>
+        ),
+        description: "Something went wrong.",
+      });
+    }
   };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogOverlay className="bg-black/10" />
       <AlertDialogContent className=" overflow-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>Cancel offer</AlertDialogTitle>

@@ -8,7 +8,7 @@ import {
   SheetFooter,
   SheetTrigger,
 } from "./ui/sheet";
-import { ConnectWalletBtn } from "./ConnectWalletBtn";
+import { ConnectWalletBtn } from "./connectWallet/ConnectWalletBtn";
 import { cn } from "@/lib/utils";
 
 export const HeaderSideMenu: React.FC<PropsWithChildren> = (props) => {
