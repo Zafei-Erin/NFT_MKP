@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 
 import { ErrorPage } from "@/components/ErrorPage";
 import { Suspense } from "react";
-import { Header } from "./components/Header";
+import { Header } from "./components/header/Header";
 import { LoadingPage } from "./components/LoadingPage";
 import { WalletProvider } from "./context/walletProvider";
 import { Create } from "./pages/Create";
