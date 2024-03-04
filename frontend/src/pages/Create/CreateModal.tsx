@@ -51,8 +51,6 @@ export const CreateModal: React.FC<ProgressModalProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  console.log(staus);
-
   // upload img to ipfs
   const uploadImgToIpfs = async (img: File) => {
     setStatus("uploadingImg");
