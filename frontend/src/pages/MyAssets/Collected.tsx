@@ -8,6 +8,7 @@ import { useWallet } from "@/context/walletProvider";
 import { NFT } from "@/types/types";
 import { ListModal } from "../../components/ListModal";
 import { UpdateListingModal } from "../../components/UpdateListingModal";
+import { Button } from "@/components/ui/button";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -42,9 +43,9 @@ export const Collected = () => {
           You haven't collected any NFT yet.
         </p>
         <Link to="/">
-          <button className="rounded-lg bg-sky-600 px-2 py-1 text-lg text-white transition-all hover:bg-sky-700">
+          <Button className="rounded-lg bg-sky-600 text-lg text-white transition-all hover:bg-sky-700">
             Home
-          </button>
+          </Button>
         </Link>
       </div>
     );
