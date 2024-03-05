@@ -1,6 +1,7 @@
-import { getErrorMessage } from "@/lib/utils";
 import { ethers, providers } from "ethers";
 import { ReactNode, createContext, useState } from "react";
+
+import { getErrorMessage } from "@/lib/utils";
 
 type WalletContextType = {
   accountAddr: string;
@@ -24,25 +25,27 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   >();
 
   const connect = async (): Promise<Status> => {
-    if (typeof window.ethereum !== "undefined") {
-      const metaMaskProvider = window.ethereum.providers.find(
-        (p: providers.ExternalProvider) => p.isMetaMask,
-      );
-      try {
-        const account = await metaMaskProvider.request({
-          method: "eth_requestAccounts",
-        });
-        setAccountAddr(account[0]);
-        return { success: true };
-      } catch (err) {
-        const message = getErrorMessage(err);
-        return { success: false, message };
-      } finally {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(provider);
-      }
-    } else {
+    if (
+      window.ethereum === undefined ||
+      window.ethereum.providers === undefined
+    ) {
       return { success: false, message: "Please install MetaMask first!" };
+    }
+    const metaMaskProvider = window.ethereum.providers.find(
+      (p: providers.ExternalProvider) => p.isMetaMask,
+    );
+    try {
+      const account = await metaMaskProvider.request?.({
+        method: "eth_requestAccounts",
+      });
+      setAccountAddr(account[0]);
+      return { success: true };
+    } catch (err) {
+      const message = getErrorMessage(err);
+      return { success: false, message };
+    } finally {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
     }
   };
 
@@ -54,5 +57,3 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     </WalletContext.Provider>
   );
 };
-
-

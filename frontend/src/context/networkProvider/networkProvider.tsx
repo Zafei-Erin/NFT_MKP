@@ -35,7 +35,10 @@ const NetworkProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const getNetwork = async (): Promise<Status> => {
-    if (typeof window.ethereum === "undefined") {
+    if (
+      window.ethereum === undefined ||
+      window.ethereum.providers === undefined
+    ) {
       return { success: false, message: "Please install MetaMask first!" };
     }
     const metaMaskProvider = window.ethereum.providers.find(
@@ -51,7 +54,10 @@ const NetworkProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const switchNetwork = async (): Promise<Status> => {
-    if (typeof window.ethereum === "undefined") {
+    if (
+      window.ethereum === undefined ||
+      window.ethereum.providers === undefined
+    ) {
       return { success: false, message: "Please install MetaMask first!" };
     }
     const metaMaskProvider = window.ethereum.providers.find(
