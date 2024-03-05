@@ -15,7 +15,7 @@ const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
 
 export const Home = () => {
   const params: GetNFTRequest = {
-    take: 6,
+    take: 4,
     skip: 0,
     sortBy: "tokenId",
     sortDir: "desc",

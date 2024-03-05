@@ -28,7 +28,7 @@ const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
 
 export const CheapestNFTTable: React.FC = () => {
   const params: GetNFTRequest = {
-    take: 6,
+    take: 4,
     skip: 0,
     sortBy: "price",
     sortDir: "asc",
