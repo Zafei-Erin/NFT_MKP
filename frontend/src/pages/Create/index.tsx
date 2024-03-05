@@ -2,7 +2,7 @@ import { Label } from "@radix-ui/react-label";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-import { UploadIcon } from "@/assets";
+import { Spinner, UploadIcon } from "@/assets";
 import { ConnectWalletModal } from "@/components/connectWallet/ConnectWalletModal";
 import { useNetwork } from "@/context/networkProvider/networkProvider";
 import { useWallet } from "@/context/walletProvider";
@@ -19,6 +19,7 @@ export const Create = () => {
   const { accountAddr } = useWallet();
   const { getNetwork } = useNetwork();
   const [imgPreviewUrl, setImgPreviewUrl] = useState<string>("");
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const [isConnectWalletModalOpen, setIsConnectWalletModalOpen] =
     useState<boolean>(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
@@ -155,8 +156,10 @@ export const Create = () => {
           </div>
           <button
             onClick={openConnectWalletModal}
-            className="mt-4 rounded-lg bg-sky-600 p-4 font-bold text-white shadow-lg"
+            disabled={isCreating}
+            className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-sky-600 p-4 font-bold text-white shadow-lg disabled:cursor-not-allowed disabled:bg-gray-600"
           >
+            {isCreating && <Spinner className="h-6 w-6" />}
             Create Digital Asset
           </button>
           <MissingInputModal
@@ -165,6 +168,7 @@ export const Create = () => {
           />
 
           <CreateModal
+            setIsCreating={setIsCreating}
             formInput={formInput}
             open={isCreateModalOpen}
             onOpenChange={setIsCreateModalOpen}

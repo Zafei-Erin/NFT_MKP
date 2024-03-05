@@ -32,6 +32,7 @@ type ProgressModalProps = {
   open?: boolean | undefined;
   onOpenChange?: (open: boolean) => void | undefined;
   formInput: formInputType;
+  setIsCreating?: (creating: boolean) => void | undefined;
 };
 
 type ProgressStatus =
@@ -45,6 +46,7 @@ export const CreateModal: React.FC<ProgressModalProps> = ({
   formInput,
   open,
   onOpenChange,
+  setIsCreating,
 }) => {
   const { accountAddr, provider } = useWallet();
   const [staus, setStatus] = useState<ProgressStatus>("init");
@@ -165,6 +167,8 @@ export const CreateModal: React.FC<ProgressModalProps> = ({
       return;
     }
 
+    setIsCreating?.(true);
+
     try {
       const fileUrl = await uploadImgToIpfs(formInput.img);
       const uri = await createURI(fileUrl);
@@ -195,6 +199,7 @@ export const CreateModal: React.FC<ProgressModalProps> = ({
     } finally {
       setStatus("init");
       onOpenChange?.(false);
+      setIsCreating?.(false);
     }
   };
 
