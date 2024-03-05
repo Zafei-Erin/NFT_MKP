@@ -47,9 +47,8 @@ export const WelcomeModal: React.FC<Props> = ({
           <Description />
         </AlertDialogHeader>
 
-        <AlertDialogFooter>
+        <AlertDialogFooter className="mt-6">
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-
           <AlertDialogAction onClick={switchAndConnect}>
             {isTestnet ? "Connect" : "Switch"}
           </AlertDialogAction>
@@ -60,16 +59,33 @@ export const WelcomeModal: React.FC<Props> = ({
 };
 
 const Description = () => (
-  <div className="space-y-3 text-sm text-muted-foreground">
-    <p>
-      This app is deployed on Polygon Mumbai test net. To have a full
-      experience, please
-    </p>
-    <ul>
-      <li>1. install Metamask extenstion in your browser</li>
-      <li>2. switch to Mumbai test net</li>
-      <li>3. connect your wallet</li>
-    </ul>
+  <div className="space-y-6 text-left text-sm text-muted-foreground">
+    <div className="space-y-3">
+      <p>
+        This app is deployed on Polygon Mumbai test net. To have a full
+        experience, you will need:
+      </p>
+      <ul className="ml-4 space-y-3">
+        <li>
+          1.{" "}
+          <a
+            className="font-semibold underline hover:text-sky-700"
+            target="_blank"
+            href="https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN&utm_source=ext_sidebar"
+          >
+            Metamask extenstion
+          </a>{" "}
+          installed in your browser.{" "}
+        </li>
+        <li>
+          2. A wallet connected through Metamask. If you don't have one, follow
+          the instruction in Metamask extenstion to create one.
+        </li>
+        <li>
+          3. Switching network to Mumbai test net (we will help you with that).
+        </li>
+      </ul>
+    </div>
     <p>
       To creact or purchase NFTs, you will need some Matic tokens. Go get some
       <a
