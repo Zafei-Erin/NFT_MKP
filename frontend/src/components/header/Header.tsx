@@ -10,15 +10,17 @@ import { WelcomeModal } from "./WelcomeModal";
 export const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // only display welcome modal when user enter for the first time
   useEffect(() => {
     const shown = sessionStorage.getItem("shown");
-    console.log(shown);
 
     if (shown !== "true") {
       setIsModalOpen(true);
       sessionStorage.setItem("shown", "true");
     }
   }, []);
+
+  
   return (
     <div className="h-[6rem] bg-gradient-to-b from-gray-100/20 p-7 text-gray-900">
       <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-6">

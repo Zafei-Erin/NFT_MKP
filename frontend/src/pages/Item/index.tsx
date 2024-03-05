@@ -93,7 +93,7 @@ export const Item = () => {
                       )}
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="max-h-36 overflow-y-auto px-6 py-6">
+                  <AccordionContent className="max-h-36 overflow-y-auto whitespace-pre-line px-6 py-6">
                     {item.description}
                   </AccordionContent>
                 </AccordionItem>
