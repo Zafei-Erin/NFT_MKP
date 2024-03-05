@@ -15,7 +15,7 @@ const fetcher: Fetcher<NFT[], FetchWithParams> = ({ url, params }) => {
 
 export const Home = () => {
   const params: GetNFTRequest = {
-    take: 4,
+    take: 6,
     skip: 0,
     sortBy: "tokenId",
     sortDir: "desc",
@@ -32,7 +32,7 @@ export const Home = () => {
     <div className="flex flex-col items-start justify-center space-y-16 pb-16">
       <ImgCarousel nfts={nfts} />
       <div className="flex w-full flex-col items-start justify-center gap-10 overflow-x-auto px-10 md:grid md:grid-flow-col md:justify-stretch">
-        <NewestNFTTable nfts={nfts} />
+        <NewestNFTTable nfts={nfts.slice(0, 4)} />
         <CheapestNFTTable />
       </div>
     </div>
