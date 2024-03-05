@@ -110,7 +110,8 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
         <DialogHeader>
           <DialogTitle>Listing NFT</DialogTitle>
           <DialogDescription>
-            Listing this NFT to market. Click continue when you're done.
+            Listing this NFT to market. Please note that it would cost you a
+            listing fee of 0.000001 MATIC.
           </DialogDescription>
         </DialogHeader>
         <div>
@@ -128,7 +129,7 @@ export const ListModal: React.FC<ListModalProps> = ({ tokenId, children }) => {
                 placeholder="0.00 "
                 className="text-md h-fit appearance-none text-zinc-500 placeholder:text-zinc-500 focus:outline-none"
               />
-              <p>ETH</p>
+              <p>MATIC</p>
             </div>
           </label>
         </div>

@@ -64,13 +64,13 @@ export const Created = () => {
                 <div className="flex flex-col items-start justify-center px-4 pb-6 pt-4  text-sm">
                   <div className="mb-3 font-semibold">{nft.name}</div>
                   <div className="mb-2 font-semibold">
-                    {nft.listed ? `${nft.price} ETH` : "not listed"}
+                    {nft.listed ? `${nft.price} MATIC` : "not listed"}
                   </div>
                   <div className=" text-gray-700">
                     {nft.sales &&
                       nft.sales.length > 0 &&
                       `Last
-                    sale: ${nft.sales[nft.sales.length - 1].price} ETH`}
+                    sale: ${nft.sales[nft.sales.length - 1].price} MATIC`}
                   </div>
                 </div>
               </div>

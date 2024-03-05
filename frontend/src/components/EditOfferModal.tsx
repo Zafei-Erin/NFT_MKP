@@ -134,7 +134,7 @@ export const EditOfferModal: React.FC<EditOfferModalProps> = ({
                   }}
                 />
                 <div className="basis-1/5 px-3 font-semibold text-gray-900">
-                  ETH
+                  MATIC
                 </div>
               </div>
               <p

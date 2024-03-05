@@ -137,7 +137,7 @@ export const OfferModal: React.FC<OfferModalProps> = ({
                 onChange={(e) => setPrice(e.target.valueAsNumber)}
               />
               <div className="basis-1/5 px-3 font-semibold text-gray-900">
-                ETH
+              MATIC
               </div>
             </div>
             <div className="space-y-3">

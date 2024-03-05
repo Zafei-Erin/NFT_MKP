@@ -69,7 +69,7 @@ export const Collected = () => {
                   <div className="text-xs text-gray-700">
                     {nft.sales &&
                       `Last
-                    sale: ${nft.sales[nft.sales.length - 1].price} ETH`}
+                    sale: ${nft.sales[nft.sales.length - 1].price} MATIC`}
                   </div>
                 </div>
               </div>

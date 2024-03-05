@@ -63,7 +63,7 @@ export const BuyerSection: React.FC<BuyerSectionProps> = ({ item }) => {
       <div className="flex w-full flex-col items-start justify-start gap-3 rounded-lg border p-6">
         <div className="text-sm text-gray-600">Price</div>
         <div className="text-xl font-semibold sm:text-3xl">
-          {item.price} ETH
+          {item.price} MATIC
         </div>
         <div className="flex h-full w-full flex-col gap-3 md:flex-row">
           <BuyModal

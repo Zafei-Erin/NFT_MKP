@@ -85,7 +85,7 @@ export const ImgCarousel: React.FC<ImgCarouselParams> = ({ nfts }) => {
                       />
                       <div className="absolute bottom-0 flex h-[40%] w-full flex-col justify-end space-y-1 rounded-b-xl bg-gradient-to-b from-transparent to-gray-900/30 px-4 pb-4 text-gray-200">
                         <div className="truncate font-semibold">{nft.name}</div>
-                        <div className="text-sm">Price: {nft.price} ETH</div>
+                        <div className="text-sm">Price: {nft.price} MATIC</div>
                       </div>
                     </Link>
                   </CarouselItem>

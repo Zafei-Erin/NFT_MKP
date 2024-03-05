@@ -159,7 +159,7 @@ export const UpdateListingModal: React.FC<ListModalProps> = ({
                 placeholder="0.00 "
                 className="text-md h-fit appearance-none text-zinc-500 placeholder:text-zinc-500 focus:outline-none"
               />
-              <p>ETH</p>
+              <p>MATIC</p>
             </div>
           </label>
         </div>

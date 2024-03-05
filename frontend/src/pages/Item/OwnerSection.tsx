@@ -34,7 +34,7 @@ export const OwnerSection: React.FC<OwnerSectionProps> = ({ item }) => {
         <div className="flex w-full flex-col items-start justify-start gap-3 rounded-lg border p-6">
           <div className="text-sm text-gray-600">Price</div>
           <div className="text-xl font-semibold sm:text-3xl">
-            {item.price} ETH
+            {item.price} MATIC
           </div>
           <UpdateListingModal tokenId={item.tokenId}>
             <button
