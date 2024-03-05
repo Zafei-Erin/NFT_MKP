@@ -126,7 +126,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       } else {
         //@ts-expect-error e may not have message inside
         if (e.data.message.includes("insufficient funds")) {
-          msg = "You don't have sufficient funds for this transaction.";
+          msg =
+            "You don't have sufficient funds for this transaction. Follow the instruction in header to get some free tokens!";
         }
       }
 
