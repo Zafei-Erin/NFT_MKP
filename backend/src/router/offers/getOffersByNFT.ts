@@ -32,7 +32,11 @@ export const getOffersByNFT = async (
       },
     });
 
-    const total = await prisma.offer.count();
+    const total = await prisma.offer.count({
+      where: {
+        nftTokenId: parseInt(tokenId),
+      },
+    });
 
     res.status(200).json({ offers, total });
   } catch (error) {

@@ -16,6 +16,7 @@ import { EditDescriptionModal } from "./EditDescriptionModal";
 import { OfferTable } from "./OfferTable";
 import { OwnerSection } from "./OwnerSection";
 import { PriceChart } from "./PriceChart";
+import { Suspense } from "react";
 
 const apiURL = import.meta.env.VITE_API_URL;
 const nftaddress = import.meta.env.VITE_NFT_ADDRESS;
@@ -72,7 +73,9 @@ export const Item = () => {
               </div>
               <div>
                 <div className="text-lg font-semibold">Offers</div>
-                <OfferTable nftId={item.tokenId} />
+                <Suspense fallback={<div className="h-60" />}>
+                  <OfferTable nftId={item.tokenId} />
+                </Suspense>
               </div>
               <Accordion
                 type="multiple"

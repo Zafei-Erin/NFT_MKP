@@ -288,7 +288,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-6">
+                    <TableCell key={cell.id} className="h-12 px-6">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
