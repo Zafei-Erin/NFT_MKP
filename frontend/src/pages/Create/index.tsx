@@ -70,22 +70,33 @@ export const Create = () => {
           {/* upload img input */}
           <div className="flex w-full items-center justify-center">
             <div className="relative aspect-square w-80 md:w-full">
-              <label className="h-full w-full">
+              <label
+                className="h-full w-full"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  if (e.dataTransfer.files) {
+                    setImgPreviewUrl(
+                      URL.createObjectURL(e.dataTransfer.files[0]),
+                    );
+                    updateFormInput({
+                      ...formInput,
+                      img: e.dataTransfer.files[0],
+                    });
+                  }
+                }}
+              >
                 {imgPreviewUrl === "" ? (
                   <div className="flex h-full w-full cursor-pointer appearance-none justify-center rounded-xl border border-dashed border-gray-400 bg-white px-14 transition hover:border-solid hover:border-gray-400 hover:bg-gray-200/30 focus:outline-none">
-                    <span className="flex flex-col items-center justify-center space-x-2 text-sm">
+                    <div className="flex flex-col items-center justify-center space-x-2 text-sm">
                       <UploadIcon className="mb-6 h-6 w-6 text-gray-900" />
-                      <span className="font-semibold text-gray-600">
+                      <p className="font-semibold text-gray-600">
                         Drag and drop media
-                      </span>
-                      <span className="font-semibold text-sky-600">
-                        Browse files
-                      </span>
-                      <span className="text-gray-700">Max size: 50MB</span>
-                      <span className="text-gray-700">
-                        JPG, PNG, GIF, SVG, MP4
-                      </span>
-                    </span>
+                      </p>
+                      <p className="font-semibold text-sky-600">Browse files</p>
+                      <p className="text-gray-700">Max size: 50MB</p>
+                      <p className="text-gray-700">JPG, PNG, GIF, SVG, MP4</p>
+                    </div>
                   </div>
                 ) : (
                   <div
