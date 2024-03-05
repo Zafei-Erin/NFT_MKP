@@ -32,9 +32,11 @@ type OfferTableProps = {
   nftId: number;
 };
 type OfferWithUSD = Offer & { priceUSD: number };
+type SortByParams = Pick<GetOffersRequest, "sortBy" | "sortDir">;
 
 const apiURL = import.meta.env.VITE_API_URL;
 const ES_API_KEY = import.meta.env.VITE_ETHERSCAN_API_KEY;
+const PAGE_SIZE = 4;
 
 const ethFetcher: Fetcher<EthPriceType, string> = (url: string) =>
   fetch(url)
@@ -42,7 +44,10 @@ const ethFetcher: Fetcher<EthPriceType, string> = (url: string) =>
     .then((res) => {
       return res.result;
     });
-const offerFetcher: Fetcher<Offer[], FetchWithParams> = ({ url, params }) => {
+const offerFetcher: Fetcher<
+  { offers: Offer[] } & { total: string },
+  FetchWithParams
+> = ({ url, params }) => {
   const newUrl = new URL(url);
   newUrl.search = new URLSearchParams(params).toString();
   return fetch(newUrl).then((data) => data.json());
@@ -50,10 +55,14 @@ const offerFetcher: Fetcher<Offer[], FetchWithParams> = ({ url, params }) => {
 
 export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [sortByParams, setSortByParams] = useState<SortByParams>({
+    sortBy: "createAt",
+    sortDir: "desc",
+  });
   const { accountAddr } = useWallet();
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 1,
+    pageSize: PAGE_SIZE,
   });
   const pagination = useMemo(
     () => ({
@@ -69,12 +78,12 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
   );
 
   const params: GetOffersRequest = {
-    take: 6,
-    skip: 0,
-    sortBy: "createAt",
-    sortDir: "desc",
+    take: PAGE_SIZE,
+    skip: pageIndex * pageSize,
+    sortBy: sortByParams.sortBy,
+    sortDir: sortByParams.sortDir,
   };
-  const { data: offers } = useSWR(
+  const { data: resp } = useSWR(
     { url: `${apiURL}/offers/${nftId}`, params: params },
     offerFetcher,
     {
@@ -82,12 +91,12 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
     },
   );
 
+  const offers = resp.offers;
   const OfferWithUSD: OfferWithUSD[] = offers.map((origin) => {
     return { ...origin, priceUSD: origin.price * parseFloat(ethPrice.ethusd) };
   });
 
   const columnHelper = createColumnHelper<OfferWithUSD>();
-
   const columns = [
     columnHelper.accessor("price", {
       header: ({ column }) => {
@@ -95,7 +104,13 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
           <Button
             className="px-0"
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => {
+              column.toggleSorting(column.getIsSorted() === "asc");
+              setSortByParams({
+                sortBy: "price",
+                sortDir: column.getIsSorted() === "asc" ? "desc" : "asc",
+              });
+            }}
           >
             Price
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -119,7 +134,13 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
           <Button
             className="px-0"
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => {
+              column.toggleSorting(column.getIsSorted() === "asc");
+              setSortByParams({
+                sortBy: "price",
+                sortDir: column.getIsSorted() === "asc" ? "desc" : "asc",
+              });
+            }}
           >
             USD Price
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -142,7 +163,13 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
           <Button
             className="px-0"
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            onClick={() => {
+              column.toggleSorting(column.getIsSorted() === "asc");
+              setSortByParams({
+                sortBy: "expireAt",
+                sortDir: column.getIsSorted() === "asc" ? "desc" : "asc",
+              });
+            }}
           >
             Expiration
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -231,6 +258,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
       sorting,
       pagination,
     },
+    pageCount: parseInt(resp.total) || 0,
   });
 
   return (

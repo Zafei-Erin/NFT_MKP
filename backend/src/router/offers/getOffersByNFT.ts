@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { GetOffersRequest } from "@zafei/nft_mkp_types";
 import { prisma } from "../../prisma";
 
-
 const DEFAULT_PARAMS = {
   skip: 0,
   take: 6,
@@ -33,7 +32,9 @@ export const getOffersByNFT = async (
       },
     });
 
-    res.status(200).json(offers);
+    const total = await prisma.offer.count();
+
+    res.status(200).json({ offers, total });
   } catch (error) {
     next(error);
   }
