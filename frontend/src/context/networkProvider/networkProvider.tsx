@@ -92,6 +92,7 @@ const NetworkProvider = ({ children }: { children: ReactNode }) => {
                   decimals: 18,
                 },
                 rpcUrls: ["https://rpc-mumbai.polygon.technology"],
+                blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
               },
             ],
           });
