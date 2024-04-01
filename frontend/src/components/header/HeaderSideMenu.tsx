@@ -38,14 +38,7 @@ export const HeaderSideMenu: React.FC<PropsWithChildren> = (props) => {
                 My Digital Assets
               </p>
             </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/creatorDashboard">
-              <p className="rounded-lg border border-transparent px-3 py-2 text-gray-900 transition-all duration-150 hover:border-slate-900">
-                Creator Dashboard
-              </p>
-            </Link>
-          </SheetClose>
+          </SheetClose> 
           <SheetClose asChild>
             <WelcomeModal>
               <button className="rounded-lg border border-transparent px-3 py-2 text-left text-gray-900 transition-all duration-150 hover:border-slate-900">
