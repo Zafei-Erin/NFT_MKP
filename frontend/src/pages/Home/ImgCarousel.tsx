@@ -77,7 +77,8 @@ export const ImgCarousel: React.FC<ImgCarouselParams> = ({ nfts }) => {
                     key={i}
                     className="w-full basis-full pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 lg:pl-4"
                   >
-                    <Link to={`/item/${nft.tokenId}`} className="relative">
+                    <div className="relative w-full">
+                      <Link to={`/item/${nft.tokenId}`}>
                       <img
                         src={nft.imageUrl}
                         alt={nft.name}
@@ -88,6 +89,7 @@ export const ImgCarousel: React.FC<ImgCarouselParams> = ({ nfts }) => {
                         <div className="text-sm">Price: {nft.price} MATIC</div>
                       </div>
                     </Link>
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
