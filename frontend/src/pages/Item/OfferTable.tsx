@@ -258,7 +258,7 @@ export const OfferTable: React.FC<OfferTableProps> = ({ nftId }) => {
       sorting,
       pagination,
     },
-    pageCount: parseInt(resp.total) || 0,
+    pageCount: Math.ceil(parseInt(resp.total) / pageSize) || 0,
   });
 
   return (
