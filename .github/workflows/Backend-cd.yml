@@ -1,38 +1,40 @@
-name: Backend-cd
+# CD is removed from AWS to vercel
 
-on:
-  workflow_run:
-    workflows: ['Backend-ci']
-    types: [completed]
-    branches: [main]
-  pull_request:
-    types: [labeled]
+# name: Backend-cd
 
-jobs:
-  deploy-git:
-    runs-on: ubuntu-latest
+# on:
+#   workflow_run:
+#     workflows: ['Backend-ci']
+#     types: [completed]
+#     branches: [main]
+#   pull_request:
+#     types: [labeled]
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+# jobs:
+#   deploy-git:
+#     runs-on: ubuntu-latest
 
-      - name: Remove deploy label
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: "prod: backend"
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
 
-  deploy-aws:
-    needs: deploy-git
-    runs-on: aws-nft
+#       - name: Remove deploy label
+#         uses: actions-ecosystem/action-remove-labels@v1
+#         with:
+#           labels: "prod: backend"
 
-    steps:
-      - name: stop old image
-        run: sudo docker-compose stop
-      - name: remove old image 
-        run: sudo docker-compose rm -f
-      - name: pull new image
-        run: sudo docker-compose pull
-      - name: run new image
-        run: sudo docker-compose up -d
-      - name: prune images
-        run: sudo docker image prune -af
+  # deploy-aws:
+  #   needs: deploy-git
+  #   runs-on: aws-nft
+
+  #   steps:
+  #     - name: stop old image
+  #       run: sudo docker-compose stop
+  #     - name: remove old image 
+  #       run: sudo docker-compose rm -f
+  #     - name: pull new image
+  #       run: sudo docker-compose pull
+  #     - name: run new image
+  #       run: sudo docker-compose up -d
+  #     - name: prune images
+  #       run: sudo docker image prune -af

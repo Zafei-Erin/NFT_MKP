@@ -3,10 +3,10 @@ name: Frontend-ci
 on:
   push:
     branches: [main]
-    paths: 'frontend/**'
+    paths: ['frontend/**']
   pull_request:
     types: [opened, synchronize, reopened]
-    paths: 'frontend/**'
+    paths: ['frontend/**']
 
 jobs:
   git-ci:
