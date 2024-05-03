@@ -62,3 +62,19 @@ jobs:
   #         context: ./backend
   #         push: true
   #         tags: ${{ secrets.DOCKERHUB_USERNAME }}/nft-mkp-api:latest
+
+  # deploy-aws:
+  #   needs: deploy-git
+  #   runs-on: aws-nft
+
+  #   steps:
+  #     - name: stop old image
+  #       run: sudo docker-compose stop
+  #     - name: remove old image
+  #       run: sudo docker-compose rm -f
+  #     - name: pull new image
+  #       run: sudo docker-compose pull
+  #     - name: run new image
+  #       run: sudo docker-compose up -d
+  #     - name: prune images
+  #       run: sudo docker image prune -af
